@@ -1,24 +1,22 @@
 import {
-  S3Client,
+  // S3Client,
   PutObjectCommand,
-  GetObjectCommand,
+  // GetObjectCommand,
 } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+// import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { createS3Client } from "./createS3Client";
 
-export default async function uploadFile(file: File) {
-  const s3Client = new S3Client({
-    region: "auto",
-    endpoint: import.meta.env.VITE_S3_ENDPOINT,
-    credentials: {
-      accessKeyId: import.meta.env.VITE_S3_ACCESS_KEY_ID,
-      secretAccessKey: import.meta.env.VITE_S3_SECRET_ACCESS_KEY,
-    },
-  });
+export default async function uploadFile(
+  file: File,
+  folder = "/",
+  userId: string
+) {
+  const s3Client = createS3Client();
 
   const upload = await s3Client.send(
     new PutObjectCommand({
       Bucket: "snugsafe-user-files",
-      Key: file.name,
+      Key: userId + folder + file.name,
       Body: file,
       ContentType: file.type,
       ACL: "public-read",
@@ -26,6 +24,27 @@ export default async function uploadFile(file: File) {
   );
   if (upload.$metadata.httpStatusCode === 200) {
     console.log(`Successfully uploaded ${file.name} to S3`);
+
+    const resData = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/api/v1/file/upload`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          name: file.name,
+          type: "file",
+          user: userId,
+          key: userId + folder + file.name,
+          size: file.size,
+        }),
+      }
+    );
+
+    const savedFile = await resData.json();
+    console.log(`Saved file to database`, savedFile);
+    return savedFile;
   }
 
   //   const command = new GetObjectCommand({
