@@ -4,6 +4,7 @@ const env = require("dotenv").config();
 import cors from "cors";
 import { authMiddleware } from "./middleware/auth.middleware";
 import fileRouter from "./api/v1/file/file.route";
+import folderRouter from "./api/v1/folder/folder.route";
 
 const app = express();
 app.use(express.json());
@@ -23,6 +24,7 @@ app.get("/", authMiddleware, (req, res) => {
 // Use the webhook routes
 app.use("/api/v1", authRouter);
 app.use("/api/v1", fileRouter);
+app.use("/api/v1", folderRouter);
 
 app.listen(3000, "0.0.0.0", function () {
   console.log("Listening on port: 3000");
