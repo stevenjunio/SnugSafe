@@ -20,7 +20,7 @@ RUN npm run build
 FROM caddy:2.8.4-alpine
 
 # Copy the built files from the builder stage
-COPY --from=builder /app/dist /usr/share/caddy
+COPY --from=builder /app/dist /srv
 
 # Copy and format Caddyfile
 COPY Caddyfile /etc/caddy/Caddyfile
