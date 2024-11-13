@@ -1,10 +1,20 @@
-FROM node:22-alpine
+FROM node:18-alpine
+
 WORKDIR /app
+
 COPY package*.json ./
 RUN npm install
+
 COPY . .
-EXPOSE 5173
+
+ENV PORT=3000
+ENV HOST=0.0.0.0
+
 RUN npm run build
-# Use a static file server that supports SPA routing
+
+# Use a production-grade static file server
 RUN npm install -g serve
-CMD ["serve", "-s", "dist", "-p", "5173"]
+
+EXPOSE 3000
+
+CMD ["serve", "-s", "dist", "-l", "3000", "--single"]
