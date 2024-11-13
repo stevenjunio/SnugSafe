@@ -1,5 +1,7 @@
 FROM node:22-alpine
+ARG DB_HOST=db
 
+ENV key=${DB_HOST}
 
 
 # Install wget and postgresql-client
