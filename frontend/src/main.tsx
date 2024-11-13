@@ -1,4 +1,4 @@
-import React, { StrictMode } from "react";
+import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { CorbadoProvider } from "@corbado/react";
@@ -7,8 +7,6 @@ import "./index.css";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
-
-const CORBADO_PROJECT_ID = "pro-1009394064210216640";
 
 // Create a new router instance
 const router = createRouter({ routeTree });

@@ -18,7 +18,7 @@ export const CreateFolderDialog = () => {
       method: "POST",
       body: JSON.stringify({
         name: "newFolderName",
-        user: user.sub,
+        user: user?.sub,
       }),
       headers: {
         "Content-Type": "application/json",

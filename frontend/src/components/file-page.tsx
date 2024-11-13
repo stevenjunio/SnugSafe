@@ -24,7 +24,7 @@ export function FilePageComponent() {
   };
   const uploadFileMutation = useMutation({
     mutationFn: async (file: File) => {
-      return await uploadFile(file, "/", user.sub);
+      return await uploadFile(file, "/", user?.sub || "");
     },
     onSuccess: (newFile) => {
       queryClient.setQueryData(["userFiles"], (fileData) => {

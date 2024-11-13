@@ -23,8 +23,8 @@ function RouteComponent() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          authID: user.sub,
-          username: user.name,
+          authID: user?.sub,
+          username: user?.name,
         }),
       })
         .then((response) => response.json())
