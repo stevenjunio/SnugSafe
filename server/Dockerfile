@@ -1,5 +1,7 @@
 FROM node:22-alpine
 
+
+
 # Install wget and postgresql-client
 RUN apk add --no-cache wget postgresql-client
 
@@ -21,9 +23,13 @@ COPY <<EOF /app/entrypoint.sh
 set -e
 
 echo "Waiting for database to be ready..."
-while ! pg_isready -h db -U postgres; do
+while ! pg_isready -h ${DB_HOST} -U postgres; do
     sleep 1
 done
+
+
+
+
 
 echo "Database is ready! Running migrations..."
 npx prisma db push
