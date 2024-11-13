@@ -13,6 +13,7 @@ RUN npm install
 # Copy the rest of the application
 COPY . .
 
+ENV VITE_CORBADO_PROJECT_ID=pro-1009394064210216640
 # Build the application
 RUN npm run build
 
