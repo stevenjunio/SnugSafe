@@ -1,20 +1,13 @@
-FROM node:18-alpine
-
+# Build stage
+FROM node:22-alpine AS builder
 WORKDIR /app
-
 COPY package*.json ./
 RUN npm install
-
 COPY . .
-
-ENV PORT=3000
-ENV HOST=0.0.0.0
-
 RUN npm run build
 
-# Use a production-grade static file server
-RUN npm install -g serve
-
-EXPOSE 3000
-
-CMD ["serve", "-s", "dist", "-l", "3000", "--single"]
+# Production stage
+FROM caddy:2.7-alpine
+COPY --from=builder /app/dist /usr/share/caddy
+COPY Caddyfile /etc/caddy/Caddyfile
+EXPOSE 80
