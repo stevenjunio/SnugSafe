@@ -26,7 +26,7 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <CorbadoProvider projectId={CORBADO_PROJECT_ID}>
+      <CorbadoProvider projectId={import.meta.env.VITE_CORBADO_PROJECT_ID}>
         <RouterProvider router={router} />
       </CorbadoProvider>
     </StrictMode>
