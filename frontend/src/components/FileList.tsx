@@ -1,4 +1,4 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { File, Folder, MoreVertical } from "lucide-react";
 import {
   DropdownMenu,
@@ -8,17 +8,30 @@ import {
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import getFileURL from "@/lib/openS3File";
+import { FileSystem } from "@/types/file.types";
 
 type FileItem = {
   id: string;
   name: string;
-  type: "file" | "folder";
   size?: number;
   lastModified?: string;
 };
 
-export const FileList = ({ files }: { files: FileItem[] }) => {
+export const FileList = () => {
   const queryClient = useQueryClient();
+
+  const { data } = useQuery({
+    queryKey: ["currentFileSystem"],
+    queryFn: async () => {
+      const response = await fetch(
+        import.meta.env.VITE_SERVER_URL + "/api/v1/filesystem/get"
+      );
+      const data = (await response.json()) as FileSystem[];
+
+      console.log(`filesystem gathered`, data);
+      return data.sort((a, b) => a.name.localeCompare(b.name));
+    },
+  });
   const handleOpenFile = async (file: FileItem) => {
     console.log(`openining file`, file);
     const fileURL = await getFileURL(file.id);
@@ -33,20 +46,20 @@ export const FileList = ({ files }: { files: FileItem[] }) => {
         <div className="col-span-3">Size</div>
         <div className="col-span-1"></div>
       </div>
-      {files.map((item) => (
+      {data?.map((item) => (
         <div
           key={item.id}
           className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
           <div className="col-span-6 flex items-center space-x-2">
-            {item.type === "folder" ? (
+            {item.itemType === "folder" ? (
               <Folder className="min-w-6 text-yellow-500" />
             ) : (
               <File className=" min-w-6 text-blue-500" />
             )}
 
             <span
-              className="font-medium truncate"
+              className="font-medium truncate cursor-pointer hover:underline"
               onClick={() => {
                 if (item.type === "file") {
                   handleOpenFile(item);
@@ -81,7 +94,7 @@ export const FileList = ({ files }: { files: FileItem[] }) => {
                       }
                     ).then(() => {
                       queryClient.invalidateQueries({
-                        queryKey: ["userFiles"],
+                        queryKey: ["currentFileSystem"],
                       });
                     });
                   }}

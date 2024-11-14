@@ -38,10 +38,11 @@ model fileUrl {
 }
 
 model userFolder {
-  id           String       @id @unique @default(uuid())
-  name         String
-  parentFolder userFolder?  @relation("FolderRelation", fields: [id], references: [id])
-  userId       String
-  user         user         @relation(fields: [userId], references: [authId])
-  userFolder   userFolder[] @relation("FolderRelation")
+  id             String       @id @default(uuid())
+  name           String
+  parentFolderId String?
+  parentFolder   userFolder?  @relation("ParentFolderRelation", fields: [parentFolderId], references: [id])
+  childrenFolder userFolder[] @relation("ParentFolderRelation")
+  userId         String
+  user           user         @relation(fields: [userId], references: [authId])
 }

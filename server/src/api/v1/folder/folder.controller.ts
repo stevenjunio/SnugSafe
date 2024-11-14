@@ -30,7 +30,7 @@ export const createFolderController = async (req: Request, res: Response) => {
   try {
     const newFolder = await prisma.userFolder.create({
       data: {
-        name: "name",
+        name: name,
         user: {
           connect: {
             authId: user,

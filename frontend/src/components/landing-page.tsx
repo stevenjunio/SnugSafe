@@ -5,8 +5,10 @@ import { Shield, Lock, UserCheck, Zap } from "lucide-react";
 
 import snugSafeLogo from "@/assets/SnugSafe-logo.webp";
 import { Link } from "@tanstack/react-router";
+import { useCorbado } from "@corbado/react";
 
 export function LandingPageComponent() {
+  const { isAuthenticated } = useCorbado();
   return (
     <div className="flex flex-col min-h-screen">
       <header className="px-4 lg:px-6 flex items-center">
@@ -23,7 +25,7 @@ export function LandingPageComponent() {
                   Protect Your Firm with SnugSafe
                 </h1>
                 <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
-                  Secure your sensitive data with our innovative digital vault
+                  Secure your sensitive data with our cute digital vault
                   solution. Prevent breaches, eliminate leaks, and rebuild
                   trust.
                 </p>
@@ -31,10 +33,10 @@ export function LandingPageComponent() {
               <div className="space-x-4">
                 <Button>
                   <Link
-                    to="/auth/signup"
+                    to={isAuthenticated ? "/files" : "/auth/signup"}
                     className="hover:text-white text-white"
                   >
-                    Sign up
+                    {isAuthenticated ? `Dashboard` : "Sign up"}
                   </Link>
                 </Button>
                 <Button variant="outline">Learn More</Button>

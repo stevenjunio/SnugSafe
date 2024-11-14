@@ -6,3 +6,10 @@ export type FileItem = {
   size?: number;
   lastModified?: string;
 };
+export type FileSystem = {
+  id: string;
+  itemType: string;
+  name: string;
+  size?: number;
+  type?: string;
+};

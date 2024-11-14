@@ -27,9 +27,9 @@ export function FilePageComponent() {
       return await uploadFile(file, "/", user?.sub || "");
     },
     onSuccess: (newFile) => {
-      queryClient.setQueryData(["userFiles"], (fileData) => {
+      queryClient.setQueryData(["currentFileSystem"], (fileData) => {
         console.log(`were here`, newFile);
-        return [...(fileData as FileItem[]), newFile as FileItem];
+        return [...(fileData as FileItem[]), newFile as FileSystem];
       });
     },
   });
@@ -55,7 +55,7 @@ export function FilePageComponent() {
         </div>
       )}
 
-      {data && data.length > 0 && <FileList files={data} />}
+      {data && data.length > 0 && <FileList />}
     </div>
   );
 }

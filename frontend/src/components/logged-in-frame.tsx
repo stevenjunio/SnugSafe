@@ -26,7 +26,9 @@ export function LoggedInFrameComponent({
       {/* Navigation Sidebar */}
       <nav className="hidden md:block w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-center h-16 border-b border-gray-200 dark:border-gray-700">
-          <img src={logo} alt="SnugSafe Logo" width={200} />
+          <Link to="/">
+            <img src={logo} alt="SnugSafe Logo" width={200} />
+          </Link>
         </div>
         <div className="p-4">
           <ul className="space-y-2">
