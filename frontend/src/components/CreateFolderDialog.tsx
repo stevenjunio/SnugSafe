@@ -36,7 +36,10 @@ export const CreateFolderDialog = () => {
     },
     onSuccess: (newFolder) => {
       queryClient.setQueryData(["currentFileSystem"], (fileData) => {
-        return [...(fileData as FileItem[]), newFolder as FileSystem];
+        return [
+          ...(fileData as FileItem[]),
+          { ...newFolder, itemType: "folder" } as FileSystem,
+        ];
       });
     },
   });
