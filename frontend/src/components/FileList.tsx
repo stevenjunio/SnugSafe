@@ -47,7 +47,7 @@ export const FileList = ({ files }: { files: FileItem[] }) => {
 
             <span
               className="font-medium truncate"
-              onClick={(e) => {
+              onClick={() => {
                 if (item.type === "file") {
                   handleOpenFile(item);
                 }
