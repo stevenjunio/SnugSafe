@@ -30,7 +30,12 @@ export function LandingPageComponent() {
               </div>
               <div className="space-x-4">
                 <Button>
-                  <Link to="/auth/signup">Sign up</Link>
+                  <Link
+                    to="/auth/signup"
+                    className="hover:text-white text-white"
+                  >
+                    Sign up
+                  </Link>
                 </Button>
                 <Button variant="outline">Learn More</Button>
               </div>

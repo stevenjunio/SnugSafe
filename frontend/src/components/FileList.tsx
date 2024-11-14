@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
+import getFileURL from "@/lib/openS3File";
 
 type FileItem = {
   id: string;
@@ -18,6 +19,13 @@ type FileItem = {
 
 export const FileList = ({ files }: { files: FileItem[] }) => {
   const queryClient = useQueryClient();
+  const handleOpenFile = async (file: FileItem) => {
+    console.log(`openining file`, file);
+    const fileURL = await getFileURL(file.id);
+
+    // open file in new tab
+    window.open(fileURL, "_blank");
+  };
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
       <div className="grid grid-cols-12 gap-4 p-4 font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
@@ -36,7 +44,17 @@ export const FileList = ({ files }: { files: FileItem[] }) => {
             ) : (
               <File className=" min-w-6 text-blue-500" />
             )}
-            <span className="font-medium truncate">{item.name}</span>
+
+            <span
+              className="font-medium truncate"
+              onClick={(e) => {
+                if (item.type === "file") {
+                  handleOpenFile(item);
+                }
+              }}
+            >
+              {item.name}
+            </span>
           </div>
           <div className="col-span-5 text-sm text-gray-500 dark:text-gray-400">
             {item.size ? `${(item.size / 1024 / 1024).toFixed(2)} MB` : "-"}
