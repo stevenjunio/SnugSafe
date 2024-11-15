@@ -10,6 +10,16 @@ import { Button } from "./ui/button";
 import getFileURL from "@/lib/openS3File";
 import { FileSystem } from "@/types/file.types";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useState } from "react";
+import { Input } from "./ui/input";
+
 type FileItem = {
   id: string;
   name: string;
@@ -19,7 +29,6 @@ type FileItem = {
 
 export const FileList = () => {
   const queryClient = useQueryClient();
-
   const { data } = useQuery({
     queryKey: ["currentFileSystem"],
     queryFn: async () => {
@@ -39,8 +48,67 @@ export const FileList = () => {
     // open file in new tab
     window.open(fileURL, "_blank");
   };
+  const handleDeleteFile = async (item: FileSystem) => {
+    if (item.itemType === "file") {
+      fetch(
+        `${import.meta.env.VITE_SERVER_URL}/api/v1/file/${encodeURIComponent(item.id)}`,
+        {
+          method: "DELETE",
+        }
+      ).then(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["currentFileSystem"],
+        });
+      });
+    }
+    if (item.itemType === "folder") {
+      fetch(`${import.meta.env.VITE_SERVER_URL}/API/V1/folder/${item.id}`, {
+        headers: {},
+        method: "DELETE",
+      }).then(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["currentFileSystem"],
+        });
+      });
+    }
+    setitemToDelete(undefined);
+  };
+
+  const [itemToDelete, setitemToDelete] = useState<FileSystem>();
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+      <Dialog open={itemToDelete ? true : false}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {`Are you sure you want to delete this ${itemToDelete?.itemType[0].toUpperCase().concat(itemToDelete.itemType.slice(1))}`}
+            </DialogTitle>
+            <DialogDescription>
+              {`Are you sure you want to delete the ${itemToDelete?.itemType[0]
+                .toUpperCase()
+                .concat(
+                  itemToDelete.itemType.slice(1)
+                )} ${itemToDelete?.name}? This action cannot be undone.`}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end space-x-2">
+            <Button
+              variant={"secondary"}
+              onClick={() => setitemToDelete(undefined)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant={"destructive"}
+              onClick={() =>
+                itemToDelete ? handleDeleteFile(itemToDelete) : null
+              }
+            >
+              Delete file
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       <div className="grid grid-cols-12 gap-4 p-4 font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
         <div className="col-span-6">Name</div>
         <div className="col-span-3">Size</div>
@@ -82,21 +150,12 @@ export const FileList = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem>Rename</DropdownMenuItem>
-                <DropdownMenuItem>Move</DropdownMenuItem>
+                <DropdownMenuItem>Move</DropdownMenuItem>{" "}
                 <DropdownMenuItem
                   className="text-red-600"
                   onClick={() => {
                     console.log(`got deleted`);
-                    fetch(
-                      `${import.meta.env.VITE_SERVER_URL}/api/v1/file/${encodeURIComponent(item.id)}`,
-                      {
-                        method: "DELETE",
-                      }
-                    ).then(() => {
-                      queryClient.invalidateQueries({
-                        queryKey: ["currentFileSystem"],
-                      });
-                    });
+                    setitemToDelete(item);
                   }}
                 >
                   Delete

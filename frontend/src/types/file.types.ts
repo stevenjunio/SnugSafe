@@ -8,7 +8,7 @@ export type FileItem = {
 };
 export type FileSystem = {
   id: string;
-  itemType: string;
+  itemType: "folder" | "file";
   name: string;
   size?: number;
   type?: string;

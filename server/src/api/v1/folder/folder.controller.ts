@@ -1,19 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
-import {
-  S3Client,
-  DeleteObjectCommand,
-  GetObjectCommand,
-} from "@aws-sdk/client-s3";
+
 const prisma = new PrismaClient();
-const s3Client = new S3Client({
-  region: "auto",
-  endpoint: process.env.S3_ENDPOINT!,
-  credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
-  },
-});
 
 // Create a controller for the file upload route
 export const createFolderController = async (req: Request, res: Response) => {
@@ -44,4 +32,18 @@ export const createFolderController = async (req: Request, res: Response) => {
     console.log(err);
     res.status(500).json({ error: "Error creating file" }); // Send the error response with status 500
   }
+};
+
+export const deleteFolderController = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  if (!id) {
+    res.status(422);
+  }
+  console.log(`the id we're trying to delete is`, id);
+  const data = await prisma.userFolder.delete({
+    where: {
+      id: id,
+    },
+  });
+  res.status(200).json(data);
 };
