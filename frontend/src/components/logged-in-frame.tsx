@@ -15,10 +15,10 @@ export function LoggedInFrameComponent({
   const { logout } = useCorbado();
 
   const navItems = [
-    { name: "Files", icon: Files, href: "/files" },
-    { name: "File Sharing", icon: Share2, href: "/sharing" },
-    { name: "Settings", icon: Settings, href: "/settings" },
-    { name: "Team", icon: Users, href: "/team" },
+    { name: "Files", icon: Files, href: "/files", active: true },
+    { name: "File Sharing", icon: Share2, href: "/sharing", active: true },
+    { name: "Settings", icon: Settings, href: "/settings", active: false },
+    { name: "Team", icon: Users, href: "/team", active: false },
   ];
 
   return (
@@ -32,19 +32,23 @@ export function LoggedInFrameComponent({
         </div>
         <div className="p-4">
           <ul className="space-y-2">
-            {navItems.map((item) => (
-              <li key={item.name}>
-                <Link to={item.href}>
-                  <Button
-                    variant="ghost"
-                    className={`w-full justify-start ${pathname === item.href ? "text-primary bg-gray-200" : "text-gray-600 bg-transparent"} hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800`}
-                  >
-                    <item.icon className="mr-2 h-4 w-4" />
-                    {item.name}
-                  </Button>
-                </Link>
-              </li>
-            ))}
+            {navItems.map((item) => {
+              if (item.active) {
+                return (
+                  <li key={item.name}>
+                    <Link to={item.href}>
+                      <Button
+                        variant="ghost"
+                        className={`w-full justify-start ${pathname === item.href ? "text-primary bg-gray-200" : "text-gray-600 bg-transparent"} hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800`}
+                      >
+                        <item.icon className="mr-2 h-4 w-4" />
+                        {item.name}
+                      </Button>
+                    </Link>
+                  </li>
+                );
+              }
+            })}
           </ul>
         </div>
         <div className="absolute bottom-0 w-64 p-4 border-t border-gray-200 dark:border-gray-700">
