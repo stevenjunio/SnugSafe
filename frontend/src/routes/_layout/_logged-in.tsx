@@ -5,7 +5,6 @@ import { useCorbado } from "@corbado/react";
 export const Route = createFileRoute("/_layout/_logged-in")({
   component: RouteComponent,
   beforeLoad() {
-    console.log(`before we loaded my guy`);
     // if(User.toString())
     // throw redirect({ to: "auth/signup" });
   },

@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as HomeImport } from './routes/home'
 import { Route as AuthSignupImport } from './routes/auth/signup'
 import { Route as LayoutLoggedInImport } from './routes/_layout/_logged-in'
+import { Route as LayoutLoggedInSharingImport } from './routes/_layout/_logged-in.sharing'
 import { Route as LayoutLoggedInFilesImport } from './routes/_layout/_logged-in.files'
 
 // Create Virtual Routes
@@ -52,6 +53,12 @@ const AuthSignupRoute = AuthSignupImport.update({
 const LayoutLoggedInRoute = LayoutLoggedInImport.update({
   id: '/_layout/_logged-in',
   getParentRoute: () => rootRoute,
+} as any)
+
+const LayoutLoggedInSharingRoute = LayoutLoggedInSharingImport.update({
+  id: '/sharing',
+  path: '/sharing',
+  getParentRoute: () => LayoutLoggedInRoute,
 } as any)
 
 const LayoutLoggedInFilesRoute = LayoutLoggedInFilesImport.update({
@@ -106,6 +113,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutLoggedInFilesImport
       parentRoute: typeof LayoutLoggedInImport
     }
+    '/_layout/_logged-in/sharing': {
+      id: '/_layout/_logged-in/sharing'
+      path: '/sharing'
+      fullPath: '/sharing'
+      preLoaderRoute: typeof LayoutLoggedInSharingImport
+      parentRoute: typeof LayoutLoggedInImport
+    }
   }
 }
 
@@ -113,10 +127,12 @@ declare module '@tanstack/react-router' {
 
 interface LayoutLoggedInRouteChildren {
   LayoutLoggedInFilesRoute: typeof LayoutLoggedInFilesRoute
+  LayoutLoggedInSharingRoute: typeof LayoutLoggedInSharingRoute
 }
 
 const LayoutLoggedInRouteChildren: LayoutLoggedInRouteChildren = {
   LayoutLoggedInFilesRoute: LayoutLoggedInFilesRoute,
+  LayoutLoggedInSharingRoute: LayoutLoggedInSharingRoute,
 }
 
 const LayoutLoggedInRouteWithChildren = LayoutLoggedInRoute._addFileChildren(
@@ -130,6 +146,7 @@ export interface FileRoutesByFullPath {
   '': typeof LayoutLoggedInRouteWithChildren
   '/auth/signup': typeof AuthSignupRoute
   '/files': typeof LayoutLoggedInFilesRoute
+  '/sharing': typeof LayoutLoggedInSharingRoute
 }
 
 export interface FileRoutesByTo {
@@ -139,6 +156,7 @@ export interface FileRoutesByTo {
   '': typeof LayoutLoggedInRouteWithChildren
   '/auth/signup': typeof AuthSignupRoute
   '/files': typeof LayoutLoggedInFilesRoute
+  '/sharing': typeof LayoutLoggedInSharingRoute
 }
 
 export interface FileRoutesById {
@@ -149,13 +167,21 @@ export interface FileRoutesById {
   '/_layout/_logged-in': typeof LayoutLoggedInRouteWithChildren
   '/auth/signup': typeof AuthSignupRoute
   '/_layout/_logged-in/files': typeof LayoutLoggedInFilesRoute
+  '/_layout/_logged-in/sharing': typeof LayoutLoggedInSharingRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/home' | '/about' | '' | '/auth/signup' | '/files'
+  fullPaths:
+    | '/'
+    | '/home'
+    | '/about'
+    | ''
+    | '/auth/signup'
+    | '/files'
+    | '/sharing'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/home' | '/about' | '' | '/auth/signup' | '/files'
+  to: '/' | '/home' | '/about' | '' | '/auth/signup' | '/files' | '/sharing'
   id:
     | '__root__'
     | '/'
@@ -164,6 +190,7 @@ export interface FileRouteTypes {
     | '/_layout/_logged-in'
     | '/auth/signup'
     | '/_layout/_logged-in/files'
+    | '/_layout/_logged-in/sharing'
   fileRoutesById: FileRoutesById
 }
 
@@ -212,7 +239,8 @@ export const routeTree = rootRoute
     "/_layout/_logged-in": {
       "filePath": "_layout/_logged-in.tsx",
       "children": [
-        "/_layout/_logged-in/files"
+        "/_layout/_logged-in/files",
+        "/_layout/_logged-in/sharing"
       ]
     },
     "/auth/signup": {
@@ -220,6 +248,10 @@ export const routeTree = rootRoute
     },
     "/_layout/_logged-in/files": {
       "filePath": "_layout/_logged-in.files.tsx",
+      "parent": "/_layout/_logged-in"
+    },
+    "/_layout/_logged-in/sharing": {
+      "filePath": "_layout/_logged-in.sharing.tsx",
       "parent": "/_layout/_logged-in"
     }
   }

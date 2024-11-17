@@ -7,14 +7,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
 import { useState } from "react";
-import { useCorbado } from "@corbado/react";
 import { DropdownMenuItem } from "./ui/dropdown-menu";
 
 export const DeleteFolderConfirmationDialog = () => {
-  const { user } = useCorbado();
-
   const [newFolderName, setNewFolderName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   return (
