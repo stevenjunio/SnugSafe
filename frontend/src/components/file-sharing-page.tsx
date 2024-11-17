@@ -131,7 +131,7 @@ export function FileSharingPageComponent() {
         </Button>
       </div>
 
-      <Table>
+      <Table className="bg-white rounded-sm p-2">
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
