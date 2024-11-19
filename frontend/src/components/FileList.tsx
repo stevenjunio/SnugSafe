@@ -103,7 +103,10 @@ export const FileList = () => {
                 itemToDelete ? handleDeleteFile(itemToDelete) : null
               }
             >
-              Delete file
+              Delete{" "}
+              {itemToDelete?.itemType[0]
+                .toUpperCase()
+                .concat(itemToDelete.itemType.slice(1))}
             </Button>
           </div>
         </DialogContent>

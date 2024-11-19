@@ -12,7 +12,7 @@ export default async function getFileURL(fileID: string) {
     Key: fileID,
   });
 
-  const signedUrl = await getSignedUrl(s3, openCommand, { expiresIn: 1 }); // URL expires in 1 hour
+  const signedUrl = await getSignedUrl(s3, openCommand, { expiresIn: 10 }); // Url expires in 10 seconds so it can only be opened once
   console.log(`The signed URL is`, signedUrl);
   return signedUrl;
 }

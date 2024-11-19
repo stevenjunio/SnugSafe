@@ -13,14 +13,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Folder, File, MoreVertical, Share2, Plus, Users } from "lucide-react";
 import {
   Select,
@@ -131,56 +123,53 @@ export function FileSharingPageComponent() {
         </Button>
       </div>
 
-      <Table className="bg-white rounded-sm p-2">
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Shared With</TableHead>
-            <TableHead>Date Shared</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {sharedItems.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell className="font-medium">
-                <div className="flex items-center space-x-2">
-                  {item.type === "folder" ? (
-                    <Folder className="h-5 w-5 text-yellow-500" />
-                  ) : (
-                    <File className="h-5 w-5 text-blue-500" />
-                  )}
-                  <span>{item.name}</span>
-                </div>
-              </TableCell>
-              <TableCell>{item.type}</TableCell>
-              <TableCell>
-                <div className="flex items-center space-x-2">
-                  <Users className="h-5 w-5 text-gray-500" />
-                  <span>{item.sharedWith.length}</span>
-                </div>
-              </TableCell>
-              <TableCell>{item.dateShared}</TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => handleShare(item)}>
-                      <Share2 className="mr-2 h-4 w-4" />
-                      Manage Sharing
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+        <div className="grid grid-cols-12 gap-4 p-4 font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+          <div className="col-span-6 sm:col-span-6">Name</div>
+          <div className="hidden sm:block sm:col-span-3">Shared With</div>
+          <div className="hidden sm:block sm:col-span-2">Last Accessed</div>
+          <div className="col-span-6 sm:col-span-1"></div>
+        </div>
+        {sharedItems.map((item) => (
+          <div
+            key={item.id}
+            className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            <div className="col-span-6 sm:col-span-6 flex items-center space-x-2">
+              {item.type === "folder" ? (
+                <Folder className="min-w-6 text-yellow-500" />
+              ) : (
+                <File className=" min-w-6 text-blue-500" />
+              )}
+              <span className="font-medium truncate">{item.name}</span>
+            </div>
+            <div className="hidden sm:block sm:col-span-3 text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex items-center space-x-2">
+                <Users className="h-5 w-5 text-gray-500" />
+                <span>{item.sharedWith.length}</span>
+              </div>
+            </div>
+            <div className="hidden sm:block sm:col-span-2 text-sm text-gray-500 dark:text-gray-400">
+              {item.dateShared}
+            </div>
+            <div className="col-span-6 sm:col-span-1 flex justify-end">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="h-8 w-8 p-0">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => handleShare(item)}>
+                    <Share2 className="mr-2 h-4 w-4" />
+                    Manage Sharing
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+        ))}
+      </div>
 
       <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
@@ -188,28 +177,14 @@ export function FileSharingPageComponent() {
             <DialogTitle>Manage Sharing for {selectedItem?.name}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="">
               <Input
                 id="email"
-                placeholder="Email address"
+                placeholder="Username"
                 className="col-span-3"
                 value={newShareEmail}
                 onChange={(e) => setNewShareEmail(e.target.value)}
               />
-              <Select
-                value={newShareAccess}
-                onValueChange={(value: "view" | "edit") =>
-                  setNewShareAccess(value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Access" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="view">View</SelectItem>
-                  <SelectItem value="edit">Edit</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
             <Button onClick={handleAddShare}>Add Share</Button>
             <div className="mt-4">
@@ -226,15 +201,7 @@ export function FileSharingPageComponent() {
                       onValueChange={(value: "view" | "edit") =>
                         handleUpdateAccess(selectedItem.id, share.email, value)
                       }
-                    >
-                      <SelectTrigger className="w-[100px]">
-                        <SelectValue placeholder="Access" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="view">View</SelectItem>
-                        <SelectItem value="edit">Edit</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    ></Select>
                     <Button
                       variant="destructive"
                       size="sm"
