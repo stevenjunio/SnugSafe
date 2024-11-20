@@ -6,5 +6,13 @@ export const Route = createFileRoute("/_layout/_logged-in/sharing")({
 });
 
 function RouteComponent() {
-  return <FileSharingPageComponent />;
+  return (
+    <>
+      <head>
+        <meta title="SnugSafe" />
+        <title>SnugSafe</title>
+      </head>
+      <FileSharingPageComponent />
+    </>
+  );
 }
