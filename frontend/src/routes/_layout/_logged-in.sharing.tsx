@@ -8,10 +8,7 @@ export const Route = createFileRoute("/_layout/_logged-in/sharing")({
 function RouteComponent() {
   return (
     <>
-      <head>
-        <meta title="SnugSafe" />
-        <title>SnugSafe</title>
-      </head>
+      <meta title="SnugSafe" />
       <FileSharingPageComponent />
     </>
   );

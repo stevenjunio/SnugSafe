@@ -20,15 +20,17 @@ model user {
   lastLogin   DateTime?    @default(now())
   userFiles   userFile[]
   userFolder  userFolder[]
+  fileShare   fileShare[]
 }
 
 model userFile {
-  id     String @id @unique
-  userId String
-  user   user   @relation(fields: [userId], references: [id])
-  name   String
-  size   Int
-  type   String
+  id        String      @id @unique
+  userId    String
+  user      user        @relation(fields: [userId], references: [id])
+  name      String
+  size      Int
+  type      String
+  fileShare fileShare[]
 }
 
 model fileUrl {
@@ -45,4 +47,12 @@ model userFolder {
   childrenFolder userFolder[] @relation("ParentFolderRelation")
   userId         String
   user           user         @relation(fields: [userId], references: [authId])
+}
+
+model fileShare {
+  id         String   @id @default(uuid())
+  userFileID String
+  userFile   userFile @relation(fields: [userFileID], references: [id])
+  sharedTo   user     @relation(fields: [userId], references: [id])
+  userId     String
 }

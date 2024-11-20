@@ -1,5 +1,13 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { File, Folder, MoreVertical } from "lucide-react";
+import {
+  File,
+  Folder,
+  MoreVertical,
+  Share2,
+  Edit3,
+  Move,
+  Trash2,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +17,7 @@ import {
 import { Button } from "./ui/button";
 import getFileURL from "@/lib/openS3File";
 import { FileSystem } from "@/types/file.types";
+import { Input } from "./ui/input";
 
 import {
   Dialog,
@@ -74,8 +83,81 @@ export const FileList = () => {
   };
 
   const [itemToDelete, setitemToDelete] = useState<FileSystem>();
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<FileSystem | null>(null);
+  const [newShareEmail, setNewShareEmail] = useState("");
+  const [newShareAccess, setNewShareAccess] = useState<"view" | "edit">("view");
+
+  const handleShare = (item: FileSystem) => {
+    setSelectedItem(item);
+    setIsShareDialogOpen(true);
+  };
+
+  const handleAddShare = () => {
+    if (selectedItem && newShareEmail) {
+      // Implement the logic to add a new share
+      setNewShareEmail("");
+      setNewShareAccess("view");
+      console.log(newShareAccess);
+      setIsShareDialogOpen(false);
+    }
+  };
+
+  // const handleRemoveShare = (email: string) => {
+  //   // Implement the logic to remove a share
+  // };
+
+  // const handleUpdateAccess = (email: string, newAccess: "view" | "edit") => {
+  //   // Implement the logic to update access
+  // };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+      <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Manage Sharing for {selectedItem?.name}</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="">
+              <Input
+                id="email"
+                placeholder="Email"
+                className="col-span-3"
+                value={newShareEmail}
+                onChange={(e) => setNewShareEmail(e.target.value)}
+              />
+            </div>
+            <Button onClick={handleAddShare}>Add Share</Button>
+            <div className="mt-4">
+              <h4 className="mb-2 font-semibold">Current Shares:</h4>
+              {/* {selectedItem?.map((share) => (
+                <div
+                  key={share.email}
+                  className="flex items-center justify-between py-2"
+                >
+                  <span>{share.email}</span>
+                  <div className="flex items-center space-x-2">
+                    <Select
+                      value={share.access}
+                      onValueChange={(value: "view" | "edit") =>
+                        handleUpdateAccess(share.email, value)
+                      }
+                    ></Select>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleRemoveShare(share.email)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </div>
+              ))} */}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
       <Dialog open={itemToDelete ? true : false}>
         <DialogContent>
           <DialogHeader>
@@ -151,8 +233,18 @@ export const FileList = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>Rename</DropdownMenuItem>
-                <DropdownMenuItem>Move</DropdownMenuItem>{" "}
+                <DropdownMenuItem>
+                  <Edit3 className="mr-2 h-4 w-4 text-pink-500" />
+                  Rename
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Move className="mr-2 h-4 w-4 text-green-500" />
+                  Move
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleShare(item)}>
+                  <Share2 className="mr-2 h-4 w-4 text-purple-500" />
+                  Sharing
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   className="text-red-600"
                   onClick={() => {
@@ -160,6 +252,7 @@ export const FileList = () => {
                     setitemToDelete(item);
                   }}
                 >
+                  <Trash2 className="mr-2 h-4 w-4 text-red-500" />
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
