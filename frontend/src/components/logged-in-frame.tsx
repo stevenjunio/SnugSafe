@@ -60,7 +60,7 @@ export function LoggedInFrameComponent({
           <Link to="/">
             <img src={logo} alt="SnugSafe Logo" width={200} />
           </Link>
-          <Button className="md:hidden" onClick={toggleMobileMenu}>
+          <Button className="md:hidden ml-6" onClick={toggleMobileMenu}>
             <span className="sr-only">Close Menu</span>
             <svg
               className="h-6 w-6"
@@ -84,7 +84,10 @@ export function LoggedInFrameComponent({
               if (item.active) {
                 return (
                   <li key={item.name}>
-                    <Link to={item.href}>
+                    <Link
+                      to={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
                       <Button
                         variant="ghost"
                         className={`w-full justify-start ${pathname === item.href ? "text-primary bg-gray-200" : "text-gray-600 bg-transparent"} hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800`}
