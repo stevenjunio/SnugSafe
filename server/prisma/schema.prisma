@@ -21,6 +21,7 @@ model user {
   userFiles   userFile[]
   userFolder  userFolder[]
   fileShare   fileShare[]
+  userId      String?
 }
 
 model userFile {
@@ -50,9 +51,9 @@ model userFolder {
 }
 
 model fileShare {
-  id         String   @id @default(uuid())
-  userFileID String
-  userFile   userFile @relation(fields: [userFileID], references: [id])
-  sharedTo   user     @relation(fields: [userId], references: [id])
-  userId     String
+  id             String   @id @default(uuid())
+  userFileID     String
+  userFile       userFile @relation(fields: [userFileID], references: [id])
+  sharedTo       user     @relation(fields: [userSharedToID], references: [id])
+  userSharedToID String
 }

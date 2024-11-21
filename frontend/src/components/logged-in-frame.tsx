@@ -56,11 +56,11 @@ export function LoggedInFrameComponent({
           mobileMenuOpen ? "block" : "hidden"
         } md:block w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 absolute md:relative z-10 h-full`}
       >
-        <div className="flex items-center justify-between h-16 border-b border-gray-200 dark:border-gray-700 p-4 md:p-0">
+        <div className="flex justify-self-center items-center justify-between h-16 border-b border-gray-200 dark:border-gray-700 p-4 md:p-0">
           <Link to="/">
             <img src={logo} alt="SnugSafe Logo" width={200} />
           </Link>
-          <Button className="md:hidden ml-6" onClick={toggleMobileMenu}>
+          <Button className=" md:hidden ml-6" onClick={toggleMobileMenu}>
             <span className="sr-only">Close Menu</span>
             <svg
               className="h-6 w-6"

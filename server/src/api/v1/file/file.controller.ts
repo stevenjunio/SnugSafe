@@ -5,6 +5,7 @@ import {
   DeleteObjectCommand,
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
+import { FileAccessManager } from "./file.service";
 const prisma = new PrismaClient();
 const s3Client = new S3Client({
   region: "auto",
@@ -113,5 +114,40 @@ export const deleteFileController = async (req: Request, res: Response) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Error deleting file" });
+  }
+};
+
+export const postShareRequestController = async (
+  req: Request,
+  res: Response
+) => {
+  const { fileId, username } = req.body;
+  console.log(`Sharing file ${fileId} with ${username} and access levelsss`);
+
+  try {
+    const fileAccessManager = new FileAccessManager();
+    const privateAccessKey = await fileAccessManager.generateKeyFromBubbleLamp(
+      "test",
+      "test"
+    );
+    // Implement the logic to handle the share request
+    // For example, create a new share record in the database
+    // const newShare = await prisma.fileShare.create({
+    //   data: {
+    //     userFile: {
+    //       connect: {
+    //         id: fileId,
+    //       },
+    //     },
+    //     sharedTo: {connect: {
+
+    //     }}
+    //   },
+    // });
+    console.log(`the private access keys are`, privateAccessKey);
+    res.status(200).json({ name: privateAccessKey });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error sharing file" });
   }
 };

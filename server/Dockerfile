@@ -29,14 +29,8 @@ while ! pg_isready -h ${DB_HOST} -U postgres; do
     sleep 1
 done
 
-
-
-
-
 echo "Database is ready! Running migrations..."
 npx prisma db push
-
-
 
 echo "Starting application..."
 exec npm run dev
