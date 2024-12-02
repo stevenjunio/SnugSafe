@@ -18,6 +18,7 @@ export const authMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log(`authenticating user`);
   const sessionToken = req.cookies?.cbo_session_token;
   if (!sessionToken) {
     console.error(`User tried to authenticate endpoint with no session token`);

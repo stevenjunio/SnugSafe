@@ -52,7 +52,10 @@ export function FileSharingPageComponent() {
     queryFn: async () => {
       console.log(`Fetching files shared to me`);
       const response = await fetch(
-        import.meta.env.VITE_SERVER_URL + `/api/v1/file/share?userID=${user}`
+        import.meta.env.VITE_SERVER_URL + `/api/v1/file/share?userID=${user}`,
+        {
+          credentials: "include", // Ensure cookies are sent with the request
+        }
       );
       const data = (await response.json()) as FileShare[];
       console.log(`Files shared to me: `, data);
@@ -127,7 +130,7 @@ export function FileSharingPageComponent() {
     const response = await fetch(
       `${import.meta.env.VITE_SERVER_URL}/api/v1/file/share/${fileShare.id}`,
       {
-        credentials: "include",
+        credentials: "include", // Ensure cookies are sent with the request
       }
     );
     const data = await response.json();
