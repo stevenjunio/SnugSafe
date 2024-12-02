@@ -125,7 +125,7 @@ export function FileSharingPageComponent() {
     console.log(`openining file`, fileShare.userFileID);
     //check that the user has a valid userFileKey by hitting the server endpoint
     const response = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/api/v1/file/share/a${fileShare.id}`,
+      `${import.meta.env.VITE_SERVER_URL}/api/v1/file/share/${fileShare.id}`,
       {
         credentials: "include",
       }
