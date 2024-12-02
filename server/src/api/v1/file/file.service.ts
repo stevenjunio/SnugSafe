@@ -1,6 +1,18 @@
+import { User } from "@corbado/node-sdk/cjs/services";
 import { PrismaClient, user, userFile } from "@prisma/client";
-import { createHash, randomInt } from "crypto";
+import {
+  createHash,
+  randomInt,
+  verify,
+  sign,
+  createSign,
+  createPublicKey,
+} from "crypto";
 import sharp from "sharp";
+import { SDK, Config } from "@corbado/node-sdk";
+import { corbadoSDK } from "../../../utils/corbado";
+import getUserByUsername from "../../../utils/getUserByUsername";
+require("dotenv").config();
 
 const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
 
@@ -15,7 +27,7 @@ class FileAccessManager {
     this.prisma = new PrismaClient();
   }
 
-  async generateKeyFromBubbleLamp(fileId: userFile["id"], userId: user["id"]) {
+  async generateKeyFromBubbleLamp() {
     const image = sharp("src/public/images/cute-lamp-auth.webp");
     const { data, info } = await image
       .raw()
@@ -34,43 +46,74 @@ class FileAccessManager {
       );
     }
     console.log(`the randomly selected pixels are: `, selectedPixels);
-    const hashedPixels = createHash("sha256")
+    const fileKey = createHash("sha256")
       .update(Buffer.from(selectedPixels))
       .digest("hex");
 
-    console.log(`the final hash`, hashedPixels);
-    return hashedPixels;
+    console.log(`the final hash`, fileKey);
+
+    if (!process.env.BUBBLE_LAMP_PRIVATE_KEY) {
+      throw new Error(`No bubble lamp public key found`);
+    }
+
+    return fileKey;
   }
 
-  //   async validateAccess(fileId, userId, providedKey) {
-  //     // Recreate the compound key
-  //     const validationKey = crypto
-  //       .createHash("sha256")
-  //       .update(`${fileId}:${userId}:${providedKey}`)
-  //       .digest("hex");
+  verifyUserAccess(userPublicKey: string, signature: Buffer) {
+    if (!process.env.BUBBLE_LAMP_PRIVATE_KEY) {
+      throw new Error(`No private key found`);
+    }
+    if (!userPublicKey) {
+      throw new Error(`No user public key found`);
+    }
+    if (!signature) {
+      throw new Error(`No signature found`);
+    }
+    try {
+      console.log(`trying to verify with the following:`, {
+        userPublicKey,
+        privateKey: process.env.BUBBLE_LAMP_PRIVATE_KEY,
+        signature,
+      });
+      return verify(
+        "SHA256",
+        Buffer.from(userPublicKey),
+        process.env.BUBBLE_LAMP_PRIVATE_KEY,
+        signature
+      );
+    } catch (error) {
+      return false;
+    }
+  }
 
-  //     // Check if key exists in database
-  //     const isValid = await this.verifyKeyInDatabase(validationKey);
-  //     return isValid;
-  //   }
+  async shareFileWithUser(username: string, file: userFile["id"]) {
+    console.log(`the username we are sharing to is: `, username);
+    const userAuthID = await getUserByUsername(username);
 
-  //   async getFileAccess(fileId, userId, providedKey) {
-  //     const hasAccess = await this.validateAccess(fileId, userId, providedKey);
-
-  //     if (!hasAccess) {
-  //       throw new Error("Invalid access key");
-  //     }
-
-  //     // Generate temporary signed URL for R2
-  //     const command = new GetObjectCommand({
-  //       Bucket: "your-bucket-name",
-  //       Key: fileId,
-  //     });
-
-  //     // Generate a signed URL that expires in 1 hour
-  //     const signedUrl = await getSignedUrl(this.s3, command, { expiresIn: 3600 });
-  //     return signedUrl;
-  //   }
+    if (!userAuthID) {
+      console.error(`No user was found`);
+      return { error: "No user was found" };
+    }
+    console.log(
+      `the user associated with the ID that we are sharing to is: `,
+      userAuthID
+    );
+    if (userAuthID) {
+      const user = await this.prisma.user.findUnique({
+        where: { authId: userAuthID },
+      });
+      if (user) {
+        const newFileShare = await this.prisma.fileShare.create({
+          data: {
+            userFileID: file,
+            userSharedToID: user.id,
+          },
+        });
+        console.log(`We created a new FileShare:`, newFileShare);
+        return newFileShare;
+      }
+    }
+  }
 }
 
 export { FileAccessManager };

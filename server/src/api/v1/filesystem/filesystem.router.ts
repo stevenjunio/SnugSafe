@@ -3,6 +3,6 @@ import { getFileSystemController } from "./filesystem.controller";
 
 const fileSystemRouter = Router();
 
-fileSystemRouter.get("/filesystem/get", getFileSystemController);
+fileSystemRouter.get("/filesystem", getFileSystemController);
 
 export default fileSystemRouter;

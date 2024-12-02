@@ -13,6 +13,7 @@ export const createUser = async ({ authID, username }: User) => {
   const userExists = await prisma.user.findUnique({
     where: {
       authId: authID,
+      userName: username,
     },
   });
   if (userExists) {

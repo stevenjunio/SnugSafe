@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import FileSharingDialog from "./FileSharingDialog";
+import { useCorbado } from "@corbado/react";
 
 type FileItem = {
   id: string;
@@ -67,6 +68,7 @@ const getFileIcon = (fileName: string) => {
 
 export const FileList = () => {
   const queryClient = useQueryClient();
+  const { user } = useCorbado();
   const [fileSharing, setFileSharing] = useState<FileSystem | undefined>(
     undefined
   );
@@ -83,7 +85,8 @@ export const FileList = () => {
     queryKey: ["currentFileSystem"],
     queryFn: async () => {
       const response = await fetch(
-        import.meta.env.VITE_SERVER_URL + "/api/v1/filesystem/get"
+        import.meta.env.VITE_SERVER_URL +
+          `/api/v1/filesystem?user=${encodeURIComponent(`${user?.sub}`)}`
       );
       const data = (await response.json()) as FileSystem[];
 

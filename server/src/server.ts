@@ -6,14 +6,17 @@ import { authMiddleware } from "./middleware/auth.middleware";
 import fileRouter from "./api/v1/file/file.route";
 import folderRouter from "./api/v1/folder/folder.route";
 import fileSystemRouter from "./api/v1/filesystem/filesystem.router";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "*",
+    credentials: true,
+    origin: process.env.FRONTEND_URL,
   })
 );
+app.use(cookieParser());
 
 app.get("/", authMiddleware, (req, res) => {
   console.log(`the req user is`, req.user);

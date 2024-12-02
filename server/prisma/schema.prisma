@@ -14,24 +14,27 @@ datasource db {
 }
 
 model user {
-  id          String       @id @unique @default(uuid())
-  authId      String       @unique
-  createdDate DateTime     @default(now())
-  lastLogin   DateTime?    @default(now())
+  id          String        @id @unique @default(uuid())
+  authId      String        @unique
+  userName    String?
+  createdDate DateTime      @default(now())
+  lastLogin   DateTime?     @default(now())
   userFiles   userFile[]
   userFolder  userFolder[]
   fileShare   fileShare[]
   userId      String?
+  userKeys    userFileKey[]
 }
 
 model userFile {
-  id        String      @id @unique
+  id        String        @id @unique
   userId    String
-  user      user        @relation(fields: [userId], references: [id])
+  user      user          @relation(fields: [userId], references: [id])
   name      String
   size      Int
   type      String
   fileShare fileShare[]
+  userKeys  userFileKey[]
 }
 
 model fileUrl {
@@ -53,7 +56,16 @@ model userFolder {
 model fileShare {
   id             String   @id @default(uuid())
   userFileID     String
-  userFile       userFile @relation(fields: [userFileID], references: [id])
+  userFile       userFile @relation(fields: [userFileID], references: [id], onDelete: Cascade)
   sharedTo       user     @relation(fields: [userSharedToID], references: [id])
   userSharedToID String
+}
+
+model userFileKey {
+  id         String   @id @unique @default(uuid())
+  userFile   userFile @relation(fields: [userFileID], references: [id], onDelete: Cascade)
+  userFileID String
+  key        String
+  user       user     @relation(fields: [userId], references: [id])
+  userId     String
 }

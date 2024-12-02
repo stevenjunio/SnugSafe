@@ -16,7 +16,7 @@ function RouteComponent() {
 
   console.log(`we are authenticated`, isAuthenticated, user);
   if (!isAuthenticated) {
-    console.log(`we are authenticated`, isAuthenticated);
+    console.log(`we are not authenticated`, isAuthenticated);
     navigate({ to: "/auth/signup" });
   }
   return (

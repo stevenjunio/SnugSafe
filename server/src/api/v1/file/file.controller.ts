@@ -6,6 +6,8 @@ import {
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
 import { FileAccessManager } from "./file.service";
+import getUserByUsername from "../../../utils/getUserByUsername";
+import { corbadoSDK } from "../../../utils/corbado";
 const prisma = new PrismaClient();
 const s3Client = new S3Client({
   region: "auto",
@@ -122,32 +124,173 @@ export const postShareRequestController = async (
   res: Response
 ) => {
   const { fileId, username } = req.body;
-  console.log(`Sharing file ${fileId} with ${username} and access levelsss`);
 
+  if (!fileId || !username) {
+    res.status(400).json({ error: "Missing fileId or username" });
+    return;
+  }
   try {
+    console.log(`Sharing file ${fileId} with ${username} and access levelsss`);
     const fileAccessManager = new FileAccessManager();
-    const privateAccessKey = await fileAccessManager.generateKeyFromBubbleLamp(
-      "test",
-      "test"
-    );
-    // Implement the logic to handle the share request
-    // For example, create a new share record in the database
-    // const newShare = await prisma.fileShare.create({
-    //   data: {
-    //     userFile: {
-    //       connect: {
-    //         id: fileId,
-    //       },
-    //     },
-    //     sharedTo: {connect: {
 
-    //     }}
-    //   },
-    // });
-    console.log(`the private access keys are`, privateAccessKey);
-    res.status(200).json({ name: privateAccessKey });
+    //generate a key from the fileAccessManager
+    const key = await fileAccessManager.generateKeyFromBubbleLamp();
+
+    console.log(`the fileKey from the BubbleLamp key is:`, key);
+
+    const user = await getUserByUsername(username);
+
+    //save the key to the user in the db
+    const fileKey = await prisma.userFileKey.create({
+      data: {
+        key: key,
+        userFile: {
+          connect: {
+            id: fileId,
+          },
+        },
+        user: {
+          connect: {
+            authId: user,
+          },
+        },
+      },
+    });
+    if (!fileKey) {
+      res.status(400).json({ error: "Error saving key" });
+      return;
+    }
+
+    // Share the file with the user
+    const newFileShare = await fileAccessManager.shareFileWithUser(
+      username,
+      fileId
+    );
+    console.log(`the new fileshare is:`, newFileShare);
+    //@ts-ignore because for some reason types aren't working
+    if (newFileShare?.error) {
+      res.status(400).json({ error: newFileShare });
+      return;
+    }
+    res.status(200).json({ fileShare: newFileShare });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Error sharing file" });
+  }
+};
+
+export const getSharedFilesController = async (req: Request, res: Response) => {
+  const { userID } = req.query;
+  console.log(`Getting shared files for user ${userID}`);
+  if (!userID || typeof userID !== "string") {
+    res.status(400).json({ error: "Invalid user ID" });
+    return;
+  }
+
+  try {
+    const sharedFiles = await prisma.fileShare.findMany({
+      where: {
+        sharedTo: { authId: userID },
+      },
+      include: {
+        userFile: {
+          select: {
+            user: {
+              select: {
+                userName: true,
+              },
+            },
+            name: true,
+            id: true,
+            type: true,
+          },
+        },
+      },
+    });
+    console.log(`Shared files:`, sharedFiles);
+
+    // add in the username
+
+    res.status(200).json(sharedFiles);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error getting shared files" });
+  }
+};
+
+export const getSharedFileController = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  console.log(`Getting shared file with id ${id}`);
+  console.log(`the cookies are:`, req.cookies);
+  if (!req.cookies.cbo_session_token) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
+  try {
+    //get the user from corbado
+    const user = await corbadoSDK
+      .sessions()
+      .validateToken(req.cookies.cbo_session_token);
+
+    console.log(`the user is:`, user);
+
+    //if the user is not found, then we return an error
+    !user && res.status(401).json({ error: "Unauthorized" });
+
+    //if the user is found, then we check if they have access to the file via the keys in the db
+
+    const sharedFile = await prisma.fileShare.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        userFile: {
+          select: {
+            user: {
+              select: {
+                userName: true,
+                authId: true,
+              },
+            },
+            name: true,
+            id: true,
+
+            type: true,
+          },
+        },
+      },
+    });
+
+    console.log(`the sharedFile is:`, sharedFile);
+
+    if (!sharedFile) {
+      res.status(404).json({ error: "File not found" });
+      return;
+    }
+    const fileAccessKey = await prisma.userFileKey.findFirst({
+      where: {
+        userFile: {
+          id: sharedFile?.userFile.id,
+        },
+        user: {
+          authId: user.userId,
+        },
+      },
+    });
+
+    console.log(`there is a valid fileAccessKey:`, fileAccessKey);
+    //if they do, then we return the file
+    if (fileAccessKey) {
+      res.status(200).json(sharedFile);
+      return;
+    }
+
+    //if they don't, then we return an error
+    res.status(401).json({ error: "Unauthorized" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error getting shared file" });
+    return;
   }
 };

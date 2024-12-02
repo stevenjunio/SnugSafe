@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.corbadoSDK = void 0;
+const node_sdk_1 = require("@corbado/node-sdk");
+const projectID = process.env.CORBADO_PROJECT_ID;
+const apiSecret = process.env.CORBADO_API_SECRET;
+const frontendAPI = process.env.CORBADO_FRONTEND_API;
+const backendAPI = process.env.CORBADO_BACKEND_API;
+const config = new node_sdk_1.Config(projectID, apiSecret, frontendAPI, backendAPI);
+const corbadoSDK = new node_sdk_1.SDK(config);
+exports.corbadoSDK = corbadoSDK;

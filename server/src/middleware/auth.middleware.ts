@@ -28,7 +28,6 @@ export const authMiddleware = async (
   if (projectID && apiSecret && frontendAPI && backendAPI) {
     const config = new Config(projectID, apiSecret, frontendAPI, backendAPI);
 
-    console.log(`the session token is`, sessionToken);
     const sdk = new SDK(config);
     const user = await sdk.sessions().validateToken(sessionToken);
 

@@ -13,3 +13,17 @@ export type FileSystem = {
   size?: number;
   type?: string;
 };
+
+export type FileShare = {
+  id: string;
+  userFileID: string;
+  userSharedToID: string;
+  userFile: {
+    user: {
+      userName: string;
+    };
+    name: string;
+    id: string;
+    type: string;
+  };
+};

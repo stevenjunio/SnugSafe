@@ -14,9 +14,9 @@ export default function FileSharingDialog({
   onClose: () => void;
 }) {
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(visible);
-
   const [newShareEmail, setNewShareEmail] = useState("");
   const [newShareAccess, setNewShareAccess] = useState<"view" | "edit">("view");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setIsShareDialogOpen(visible);
@@ -25,15 +25,41 @@ export default function FileSharingDialog({
     }
   }, [visible, file]);
 
-  const handleAddShare = () => {
+  const handleAddShare = async () => {
     if (file && newShareEmail) {
       console.log(
         `Adding share for file: ${file.name} with email: ${newShareEmail} and access: ${newShareAccess}`
       );
-      // Implement the logic to add a new share
-      setNewShareEmail("");
-      setNewShareAccess("view");
-      onClose();
+      try {
+        const response = await fetch(
+          import.meta.env.VITE_SERVER_URL + `/api/v1/file/share`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              fileId: file.id,
+              username: newShareEmail,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.log(`the error data we received is, `, errorData.error.error);
+          setError(errorData.error.error || "Failed to share the file");
+          return;
+        }
+
+        setNewShareEmail("");
+        setNewShareAccess("view");
+        setError(null);
+        onClose();
+      } catch (err) {
+        console.error("Error sharing file:", err);
+        setError("Failed to share the file");
+      }
     }
   };
 
@@ -53,6 +79,7 @@ export default function FileSharingDialog({
               onChange={(e) => setNewShareEmail(e.target.value)}
             />
           </div>
+          {error && <p className="text-red-500">{error}</p>}
           <Button onClick={handleAddShare}>Add Share</Button>
           <div className="mt-4">
             <h4 className="mb-2 font-semibold">Current Shares:</h4>

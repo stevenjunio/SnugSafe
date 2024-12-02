@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,8 +14,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Folder, File, MoreVertical, Share2, Plus, Users } from "lucide-react";
+import {
+  Folder,
+  File,
+  MoreVertical,
+  Share2,
+  Plus,
+  Users,
+  ArrowRight,
+  ArrowLeft,
+} from "lucide-react";
 import { Select } from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import { useCorbado } from "@corbado/react";
+import { FileShare } from "@/types/file.types";
+import getFileURL from "@/lib/openS3File";
 
 type SharedItem = {
   id: string;
@@ -25,34 +39,34 @@ type SharedItem = {
 };
 
 export function FileSharingPageComponent() {
-  const [sharedItems, setSharedItems] = useState<SharedItem[]>([
-    {
-      id: "1",
-      name: "Project Proposal",
-      type: "file",
-      sharedWith: [
-        { email: "john@example.com", access: "edit" },
-        { email: "sarah@example.com", access: "view" },
-      ],
-      dateShared: "2023-05-15",
-    },
-    {
-      id: "2",
-      name: "Marketing Assets",
-      type: "folder",
-      sharedWith: [{ email: "marketing@example.com", access: "edit" }],
-      dateShared: "2023-05-10",
-    },
-  ]);
-
+  const [sharedItems, setSharedItems] = useState<SharedItem[]>([]);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<SharedItem | null>(null);
   const [newShareEmail, setNewShareEmail] = useState("");
   const [newShareAccess, setNewShareAccess] = useState<"view" | "edit">("view");
+  const [error, setError] = useState<string | null>(null);
+  const user = useCorbado().user?.sub;
 
-  const handleShare = (item: SharedItem) => {
-    setSelectedItem(item);
-    setIsShareDialogOpen(true);
+  const { data: sharedToMe } = useQuery({
+    queryKey: ["sharedToMe"],
+    queryFn: async () => {
+      console.log(`Fetching files shared to me`);
+      const response = await fetch(
+        import.meta.env.VITE_SERVER_URL + `/api/v1/file/share?userID=${user}`
+      );
+      const data = (await response.json()) as FileShare[];
+      console.log(`Files shared to me: `, data);
+      return data;
+    },
+  });
+
+  const combinedSharedItems = [
+    ...(sharedToMe?.map((item) => ({ ...item, sharedType: "toMe" })) || []),
+  ];
+
+  const handleShare = () => {
+    // IMPLEMENT SHARING MANAGEMENT LOGIC HERE
+    setSelectedItem(null);
   };
 
   const handleAddShare = () => {
@@ -107,8 +121,35 @@ export function FileSharingPageComponent() {
     setSharedItems(updatedItems);
   };
 
+  const handleOpenFile = async (fileShare: FileShare) => {
+    console.log(`openining file`, fileShare.userFileID);
+    //check that the user has a valid userFileKey by hitting the server endpoint
+    const response = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/api/v1/file/share/a${fileShare.id}`,
+      {
+        credentials: "include",
+      }
+    );
+    const data = await response.json();
+    console.log(`the data from the server is`, data);
+    if (data.error) {
+      console.error(`Error:`, data.error);
+      setError(data.error);
+      return;
+    }
+    const fileURL = await getFileURL(fileShare.userFile.id);
+
+    // open file in new tab
+    window.open(fileURL, "_blank");
+  };
+
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="bg-red-100 text-red-700 p-4 rounded">
+          <strong>Error:</strong> {error}
+        </div>
+      )}
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">File Sharing</h1>
         <Button variant="outline">
@@ -120,31 +161,49 @@ export function FileSharingPageComponent() {
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
         <div className="grid grid-cols-12 gap-4 p-4 font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
           <div className="col-span-6 sm:col-span-6">Name</div>
-          <div className="hidden sm:block sm:col-span-3">Shared With</div>
-          <div className="hidden sm:block sm:col-span-2">Last Accessed</div>
+          <div className="hidden sm:block sm:col-span-3">Shared With / By</div>
+          <div className="hidden sm:block sm:col-span-2">Type</div>
           <div className="col-span-6 sm:col-span-1"></div>
         </div>
-        {sharedItems.map((item) => (
+        {combinedSharedItems.map((item) => (
           <div
             key={item.id}
             className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             <div className="col-span-6 sm:col-span-6 flex items-center space-x-2">
-              {item.type === "folder" ? (
+              {item.userFile.type === "folder" ? (
                 <Folder className="min-w-6 text-yellow-500" />
               ) : (
                 <File className=" min-w-6 text-blue-500" />
               )}
-              <span className="font-medium truncate">{item.name}</span>
+              <span
+                className="font-medium truncate cursor-pointer hover:underline"
+                onClick={() => {
+                  if (item.userFile.type === "file") {
+                    handleOpenFile(item);
+                  }
+                }}
+              >
+                {item.userFile.name}
+              </span>
+              {item.sharedType === "toMe" ? (
+                <ArrowRight className="min-w-6 text-green-500" />
+              ) : (
+                <ArrowLeft className="min-w-6 text-red-500" />
+              )}
             </div>
             <div className="hidden sm:block sm:col-span-3 text-sm text-gray-500 dark:text-gray-400">
               <div className="flex items-center space-x-2">
                 <Users className="h-5 w-5 text-gray-500" />
-                <span>{item.sharedWith.length}</span>
+                <span>
+                  {item.sharedType === "toMe"
+                    ? item.userFile.user.userName
+                    : "Shared by me"}
+                </span>
               </div>
             </div>
             <div className="hidden sm:block sm:col-span-2 text-sm text-gray-500 dark:text-gray-400">
-              {item.dateShared}
+              {item.userFile.type}
             </div>
             <div className="col-span-6 sm:col-span-1 flex justify-end">
               <DropdownMenu>
@@ -154,7 +213,7 @@ export function FileSharingPageComponent() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => handleShare(item)}>
+                  <DropdownMenuItem onClick={() => handleShare()}>
                     <Share2 className="mr-2 h-4 w-4" />
                     Manage Sharing
                   </DropdownMenuItem>
