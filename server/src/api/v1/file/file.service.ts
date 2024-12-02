@@ -52,38 +52,11 @@ class FileAccessManager {
 
     console.log(`the final hash`, fileKey);
 
-    if (!process.env.BUBBLE_LAMP_PRIVATE_KEY) {
-      throw new Error(`No bubble lamp public key found`);
-    }
-
     return fileKey;
   }
 
   verifyUserAccess(userPublicKey: string, signature: Buffer) {
-    if (!process.env.BUBBLE_LAMP_PRIVATE_KEY) {
-      throw new Error(`No private key found`);
-    }
-    if (!userPublicKey) {
-      throw new Error(`No user public key found`);
-    }
-    if (!signature) {
-      throw new Error(`No signature found`);
-    }
-    try {
-      console.log(`trying to verify with the following:`, {
-        userPublicKey,
-        privateKey: process.env.BUBBLE_LAMP_PRIVATE_KEY,
-        signature,
-      });
-      return verify(
-        "SHA256",
-        Buffer.from(userPublicKey),
-        process.env.BUBBLE_LAMP_PRIVATE_KEY,
-        signature
-      );
-    } catch (error) {
-      return false;
-    }
+    //TO DO - implement db checks to verify the user's access key here
   }
 
   async shareFileWithUser(username: string, file: userFile["id"]) {

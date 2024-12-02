@@ -47,7 +47,7 @@ class FileAccessManager {
         });
     }
     verifyUserAccess(userPublicKey, signature) {
-        //TO DO pull existing functionality
+        //TO DO
     }
     shareFileWithUser(username, file) {
         return __awaiter(this, void 0, void 0, function* () {
