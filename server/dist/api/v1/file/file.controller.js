@@ -212,21 +212,26 @@ const getSharedFilesController = (req, res) => __awaiter(void 0, void 0, void 0,
 exports.getSharedFilesController = getSharedFilesController;
 const getSharedFileController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
+    const headers = req.headers;
+    const authHeader = headers.authorization;
     console.log(`Getting shared file with id ${id}`);
     console.log(`the cookies are:`, req.cookies);
-    if (!req.cookies.cbo_session_token) {
+    console.log(`the headers are:`, headers);
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
         res.status(401).json({ error: "Unauthorized" });
         return;
     }
     try {
-        //get the user from corbado
+        // Get the user from Corbado
         const user = yield corbado_1.corbadoSDK
             .sessions()
-            .validateToken(req.cookies.cbo_session_token);
-        console.log(`the user is:`, user);
-        //if the user is not found, then we return an error
-        !user && res.status(401).json({ error: "Unauthorized" });
-        //if the user is found, then we check if they have access to the file via the keys in the db
+            .validateToken(authHeader.split("Bearer ")[1]);
+        if (!user) {
+            console.error("Unauthorized: User not found");
+            res.status(401).json({ error: "Unauthorized" });
+            return;
+        }
+        // Check if the user has access to the file via the keys in the DB
         const sharedFile = yield prisma.fileShare.findUnique({
             where: {
                 id: id,
@@ -247,34 +252,32 @@ const getSharedFileController = (req, res) => __awaiter(void 0, void 0, void 0, 
                 },
             },
         });
-        console.log(`the sharedFile is:`, sharedFile);
         if (!sharedFile) {
+            console.error("File not found");
             res.status(404).json({ error: "File not found" });
             return;
         }
         const fileAccessKey = yield prisma.userFileKey.findFirst({
             where: {
                 userFile: {
-                    id: sharedFile === null || sharedFile === void 0 ? void 0 : sharedFile.userFile.id,
+                    id: sharedFile.userFile.id,
                 },
                 user: {
                     authId: user.userId,
                 },
             },
         });
-        console.log(`there is a valid fileAccessKey:`, fileAccessKey);
-        //if they do, then we return the file
         if (fileAccessKey) {
             res.status(200).json(sharedFile);
-            return;
         }
-        //if they don't, then we return an error
-        res.status(401).json({ error: "Unauthorized" });
+        else {
+            console.error("Unauthorized: No valid file access key");
+            res.status(401).json({ error: "Unauthorized" });
+        }
     }
     catch (err) {
-        console.log(err);
+        console.error("Error getting shared file:", err);
         res.status(500).json({ error: "Error getting shared file" });
-        return;
     }
 });
 exports.getSharedFileController = getSharedFileController;

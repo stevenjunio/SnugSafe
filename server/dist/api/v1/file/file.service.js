@@ -42,12 +42,11 @@ class FileAccessManager {
                 .update(Buffer.from(selectedPixels))
                 .digest("hex");
             console.log(`the final hash`, fileKey);
-
             return fileKey;
         });
     }
     verifyUserAccess(userPublicKey, signature) {
-        //TO DO
+        //TO DO - implement db checks to verify the user's access key here
     }
     shareFileWithUser(username, file) {
         return __awaiter(this, void 0, void 0, function* () {

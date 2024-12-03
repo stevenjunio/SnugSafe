@@ -17,6 +17,7 @@ const frontendAPI = process.env.CORBADO_FRONTEND_API;
 const backendAPI = process.env.CORBADO_BACKEND_API;
 const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
+    console.log(`authenticating user`);
     const sessionToken = (_a = req.cookies) === null || _a === void 0 ? void 0 : _a.cbo_session_token;
     if (!sessionToken) {
         console.error(`User tried to authenticate endpoint with no session token`);

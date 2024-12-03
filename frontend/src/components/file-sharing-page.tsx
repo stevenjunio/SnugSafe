@@ -28,7 +28,7 @@ import { Select } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { useCorbado } from "@corbado/react";
 import { FileShare } from "@/types/file.types";
-import getFileURL from "@/lib/openS3File";
+import { handleOpenFile } from "@/lib/fileHandlers";
 
 type SharedItem = {
   id: string;
@@ -46,6 +46,7 @@ export function FileSharingPageComponent() {
   const [newShareAccess, setNewShareAccess] = useState<"view" | "edit">("view");
   const [error, setError] = useState<string | null>(null);
   const user = useCorbado().user?.sub;
+  const { sessionToken } = useCorbado();
 
   const { data: sharedToMe } = useQuery({
     queryKey: ["sharedToMe"],
@@ -124,28 +125,6 @@ export function FileSharingPageComponent() {
     setSharedItems(updatedItems);
   };
 
-  const handleOpenFile = async (fileShare: FileShare) => {
-    console.log(`openining file`, fileShare.userFileID);
-    //check that the user has a valid userFileKey by hitting the server endpoint
-    const response = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/api/v1/file/share/${fileShare.id}`,
-      {
-        credentials: "include", // Ensure cookies are sent with the request
-      }
-    );
-    const data = await response.json();
-    console.log(`the data from the server is`, data);
-    if (data.error) {
-      console.error(`Error:`, data.error);
-      setError(data.error);
-      return;
-    }
-    const fileURL = await getFileURL(fileShare.userFile.id);
-
-    // open file in new tab
-    window.open(fileURL, "_blank");
-  };
-
   return (
     <div className="space-y-6">
       {error && (
@@ -182,8 +161,10 @@ export function FileSharingPageComponent() {
               <span
                 className="font-medium truncate cursor-pointer hover:underline"
                 onClick={() => {
-                  if (item.userFile.type === "file") {
-                    handleOpenFile(item);
+                  if (item.userFile.type === "file" && sessionToken) {
+                    handleOpenFile(item, sessionToken, setError);
+                  } else {
+                    throw new Error("Invalid file type");
                   }
                 }}
               >

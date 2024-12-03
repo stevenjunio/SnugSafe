@@ -16,7 +16,7 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({
     credentials: true,
-    origin: process.env.FRONTEND_URL,
+    origin: process.env.FRONTEND_URL, // Ensure this is the correct frontend URL
 }));
 app.use((0, cookie_parser_1.default)());
 app.get("/", auth_middleware_1.authMiddleware, (req, res) => {
