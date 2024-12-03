@@ -183,7 +183,18 @@ const getSharedFilesController = (req, res) => __awaiter(void 0, void 0, void 0,
     try {
         const sharedFiles = yield prisma.fileShare.findMany({
             where: {
-                sharedTo: { authId: userID },
+                OR: [
+                    {
+                        sharedTo: { authId: userID },
+                    },
+                    {
+                        userFile: {
+                            user: {
+                                authId: userID,
+                            },
+                        },
+                    },
+                ],
             },
             include: {
                 userFile: {
@@ -196,6 +207,13 @@ const getSharedFilesController = (req, res) => __awaiter(void 0, void 0, void 0,
                         name: true,
                         id: true,
                         type: true,
+                    },
+                },
+                sharedTo: {
+                    select: {
+                        userName: true,
+                        authId: true,
+                        id: true,
                     },
                 },
             },

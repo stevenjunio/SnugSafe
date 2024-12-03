@@ -1,10 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
-import {
-  S3Client,
-  DeleteObjectCommand,
-  GetObjectCommand,
-} from "@aws-sdk/client-s3";
+import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { FileAccessManager } from "./file.service";
 import getUserByUsername from "../../../utils/getUserByUsername";
 import { corbadoSDK } from "../../../utils/corbado";
@@ -190,7 +186,18 @@ export const getSharedFilesController = async (req: Request, res: Response) => {
   try {
     const sharedFiles = await prisma.fileShare.findMany({
       where: {
-        sharedTo: { authId: userID },
+        OR: [
+          {
+            sharedTo: { authId: userID },
+          },
+          {
+            userFile: {
+              user: {
+                authId: userID,
+              },
+            },
+          },
+        ],
       },
       include: {
         userFile: {
@@ -203,6 +210,13 @@ export const getSharedFilesController = async (req: Request, res: Response) => {
             name: true,
             id: true,
             type: true,
+          },
+        },
+        sharedTo: {
+          select: {
+            userName: true,
+            authId: true,
+            id: true,
           },
         },
       },
