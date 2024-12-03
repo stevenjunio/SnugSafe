@@ -1,0 +1,15 @@
+@keyframes wave {
+  0% {
+    transform: translateX(-20%);
+  }
+  50% {
+    transform: translateX(20%);
+  }
+  100% {
+    transform: translateX(-20%);
+  }
+}
+
+.waving-bar {
+  animation: wave 2.5s ease-in-out infinite;
+}

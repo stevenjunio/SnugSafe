@@ -5,6 +5,7 @@ import { Files, Share2, Settings, Users, LogOut } from "lucide-react";
 import { Link, useLocation } from "@tanstack/react-router";
 import logo from "@/assets/snugsafe-logo-horizontal.png";
 import { useCorbado } from "@corbado/react";
+import { Spinner } from "./ui/spinner";
 
 export function LoggedInFrameComponent({
   children,
@@ -92,9 +93,13 @@ export function LoggedInFrameComponent({
           <h3
             className={`mb-2 text-center text-teal-500 font-extrabold uppercase`}
           >
-            {username || "Loading..."}
+            {username ? username : <Spinner />}{" "}
+            {/* Display Spinner if username is empty */}
           </h3>
-          <ul className="space-y-2">
+
+          <Spinner />
+
+          <ul className="mt-2 space-y-2">
             {navItems.map((item) => {
               if (item.active) {
                 return (
