@@ -124,7 +124,7 @@ export function FileSharingPageComponent() {
                 <span>
                   {item.sharedType === "toMe"
                     ? item.userFile.user.userName
-                    : "Shared by me"}
+                    : "Shared to: " + item.sharedTo.userName}
                 </span>
               </div>
             </div>
