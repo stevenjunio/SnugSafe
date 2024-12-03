@@ -93,11 +93,11 @@ export function LoggedInFrameComponent({
           <h3
             className={`mb-2 text-center text-teal-500 font-extrabold uppercase`}
           >
-            {username ? username : <Spinner />}{" "}
+            {username ? username : <div className="min-h-6"></div>}{" "}
             {/* Display Spinner if username is empty */}
           </h3>
 
-          <Spinner />
+          <Spinner className="h-2" />
 
           <ul className="mt-2 space-y-2">
             {navItems.map((item) => {
