@@ -144,20 +144,23 @@ export const FileList = () => {
         file={fileSharing}
         onClose={handleCloseShareDialog}
       />
-      <Dialog open={itemToDelete ? true : false}>
+      <Dialog open={!!itemToDelete}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {`Are you sure you want to delete this ${itemToDelete?.itemType[0].toUpperCase().concat(itemToDelete.itemType.slice(1))}`}
-            </DialogTitle>
-            <DialogDescription>
-              {`Are you sure you want to delete the ${itemToDelete?.itemType[0]
-                .toUpperCase()
-                .concat(
-                  itemToDelete.itemType.slice(1)
-                )} ${itemToDelete?.name}? This action cannot be undone.`}
-            </DialogDescription>
-          </DialogHeader>
+          {itemToDelete && (
+            <DialogHeader>
+              <DialogTitle>
+                {`Are you sure you want to delete this ${itemToDelete?.itemType[0]?.toUpperCase().concat(itemToDelete.itemType.slice(1))}`}
+              </DialogTitle>
+              <DialogDescription>
+                {`Are you sure you want to delete the ${itemToDelete?.itemType[0]
+                  ?.toUpperCase()
+                  .concat(
+                    itemToDelete.itemType.slice(1)
+                  )} ${itemToDelete?.name}? This action cannot be undone.`}
+              </DialogDescription>
+            </DialogHeader>
+          )}
+
           <div className="flex justify-end space-x-2">
             <Button
               variant={"secondary"}
@@ -219,14 +222,14 @@ export const FileList = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>
+                {/* <DropdownMenuItem>
                   <Edit3 className="mr-2 h-4 w-4 text-pink-500" />
                   Rename
-                </DropdownMenuItem>
-                <DropdownMenuItem>
+                </DropdownMenuItem> */}
+                {/* <DropdownMenuItem>
                   <Move className="mr-2 h-4 w-4 text-green-500" />
                   Move
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuItem onClick={() => handleShare(item)}>
                   <Share2 className="mr-2 h-4 w-4 text-purple-500" />
                   Sharing

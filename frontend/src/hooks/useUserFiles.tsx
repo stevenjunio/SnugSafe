@@ -6,7 +6,7 @@ export function useUserFiles() {
   const { user } = useCorbado();
 
   return useQuery({
-    queryKey: ["userFiles"],
+    queryKey: ["currentFileSystem"],
     queryFn: async (): Promise<FileItem[]> => {
       const response = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/api/v1/files?user=${user?.sub}&page=1`

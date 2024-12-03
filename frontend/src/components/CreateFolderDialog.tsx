@@ -53,10 +53,10 @@ export const CreateFolderDialog = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        {/* <Button variant="outline">
           <Plus className="mr-2 h-4 w-4" />
           New Folder
-        </Button>
+        </Button> */}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

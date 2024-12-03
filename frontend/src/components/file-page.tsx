@@ -14,6 +14,8 @@ export function FilePageComponent() {
   const { data, isLoading, isError, error } = useUserFiles();
   const queryClient = useQueryClient();
 
+  console.log(`we refreshed the data coming from the query`, data);
+
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -21,6 +23,8 @@ export function FilePageComponent() {
     if (file) {
       await uploadFileMutation.mutateAsync(file);
     }
+    console.log(`the current target is`, event.target);
+    event.target.value = "";
   };
   const uploadFileMutation = useMutation({
     mutationFn: async (file: File) => {
@@ -54,7 +58,6 @@ export function FilePageComponent() {
           <span className="font-bold">{uploadFileMutation.variables.name}</span>
         </div>
       )}
-
       {data && data.length > 0 && <FileList />}
     </div>
   );

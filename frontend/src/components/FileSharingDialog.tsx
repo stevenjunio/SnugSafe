@@ -66,8 +66,10 @@ export default function FileSharingDialog({
   return (
     <Dialog open={isShareDialogOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Manage Sharing for {file?.name}</DialogTitle>
+        <DialogHeader className="overflow-hidden mr-10">
+          <DialogTitle className="truncate overflow-hidden text-wrap">
+            Manage Sharing for {file?.name}
+          </DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="">
