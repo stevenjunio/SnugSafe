@@ -4,8 +4,6 @@ import {
   Folder,
   MoreVertical,
   Share2,
-  Edit3,
-  Move,
   Trash2,
   Image,
   Video,

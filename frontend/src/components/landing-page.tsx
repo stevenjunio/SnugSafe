@@ -39,7 +39,6 @@ export function LandingPageComponent() {
                     {isAuthenticated ? `Dashboard` : "Sign up"}
                   </Link>
                 </Button>
-                <Button variant="outline">Learn More</Button>
               </div>
             </div>
           </div>

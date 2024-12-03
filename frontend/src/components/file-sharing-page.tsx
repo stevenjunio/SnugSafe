@@ -225,7 +225,6 @@ export function FileSharingPageComponent() {
             </div>
             <Button onClick={handleAddShare}>Add Share</Button>
             <div className="mt-4">
-              <h4 className="mb-2 font-semibold">Current Shares:</h4>
               {selectedItem?.sharedWith.map((share) => (
                 <div
                   key={share.email}

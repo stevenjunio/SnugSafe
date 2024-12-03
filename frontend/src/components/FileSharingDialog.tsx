@@ -84,7 +84,7 @@ export default function FileSharingDialog({
           {error && <p className="text-red-500">{error}</p>}
           <Button onClick={handleAddShare}>Add Share</Button>
           <div className="mt-4">
-            <h4 className="mb-2 font-semibold">Current Shares:</h4>
+            {/* <h4 className="mb-2 font-semibold">Current Shares:</h4> */}
             {/* TO DO: implement file sharing mechanism */}
           </div>
         </div>

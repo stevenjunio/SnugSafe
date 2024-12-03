@@ -7,7 +7,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useCorbado } from "@corbado/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
