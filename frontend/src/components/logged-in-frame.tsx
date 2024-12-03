@@ -13,8 +13,18 @@ export function LoggedInFrameComponent({
 }) {
   const { pathname } = useLocation();
   const { logout } = useCorbado();
+  const [username, setUsername] = useState("");
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const userInfo = useCorbado();
+  userInfo.getFullUser().then((user) => {
+    if ("identifiers" in user.val) {
+      console.log(`user from full user`, user.val.identifiers[0].value);
+      setUsername(user.val.identifiers[0].value);
+    } else {
+      console.error("Error fetching user information", user);
+    }
+  });
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -79,6 +89,11 @@ export function LoggedInFrameComponent({
           </Button>
         </div>
         <div className="p-4">
+          <h3
+            className={`mb-2 text-center text-teal-500 font-extrabold uppercase`}
+          >
+            {username || "Loading..."}
+          </h3>
           <ul className="space-y-2">
             {navItems.map((item) => {
               if (item.active) {
