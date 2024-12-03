@@ -1,4 +1,3 @@
-import React from "react";
 import "./spinner.css"; // Import the CSS file for animation
 
 export function Spinner({ className }: { className?: string }) {
