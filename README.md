@@ -1,7 +1,8 @@
+# SnugSafe is the cute digital file store solution
+
 <p align="center">
   <img src="https://snugsafe.stevenjunio.com/assets/SnugSafe-logo-CWq5d3vx.webp" width="400" alt="description">
 </p>
-<h1 align="center">SnugSafe is the cute digital file store solution</h1>
 <p>Snugsafe is the simple, secure way to store and share files with fine-tune access control for your shares. User access is controlled through simple username/passkey combinations. Simply input your username, and utilize your devices cross-platform passkey. This mean access to files are extremely secure, as they're locked to the original signing user.</p>
 <img src= "https://pub-f81e5ae4b78a473b95f2e12220d6ed07.r2.dev/SnugSafe%20Screenshot.png">
 <h2>Getting started</h2>
