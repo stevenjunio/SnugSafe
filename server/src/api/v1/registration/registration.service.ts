@@ -24,6 +24,7 @@ export const createUser = async ({ authID, username }: User) => {
   const user = await prisma.user.create({
     data: {
       authId: authID,
+      userName: username,
     },
   });
   //return new users data
