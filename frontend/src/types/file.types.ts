@@ -27,3 +27,22 @@ export type FileShare = {
     type: string;
   };
 };
+
+export type SharedItem = {
+  id: string;
+  userFileID: string;
+  userSharedToID: string;
+  userFile: {
+    user: {
+      userName: string;
+    };
+    name: string;
+    id: string;
+    type: "file" | "folder";
+  };
+  sharedTo: {
+    userName: string;
+    authId: string;
+    id: string;
+  };
+};

@@ -12,36 +12,25 @@ import {
   Folder,
   File,
   MoreVertical,
-  Share2,
   Users,
   ArrowRight,
   ArrowLeft,
+  XCircle, // Add this import for the new icon
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCorbado } from "@corbado/react";
 import { handleOpenFile } from "@/lib/fileHandlers";
-
-type SharedItem = {
-  id: string;
-  userFileID: string;
-  userSharedToID: string;
-  userFile: {
-    user: {
-      userName: string;
-    };
-    name: string;
-    id: string;
-    type: "file" | "folder";
-  };
-  sharedTo: {
-    userName: string;
-    authId: string;
-    id: string;
-  };
-};
+import { SharedItem } from "@/types/file.types";
+import ManageSharingDialog from "./ui/ManageSharingDialog";
 
 export function FileSharingPageComponent() {
   const [error, setError] = useState<string | null>(null);
+  const [sharedItemManaged, setSharedItemManaged] = useState<SharedItem | null>(
+    null
+  );
+  const queryClient = useQueryClient();
+  console.log(`sharedItemManaged: `, sharedItemManaged);
+
   const user = useCorbado().user?.sub;
   const { sessionToken } = useCorbado();
 
@@ -70,6 +59,13 @@ export function FileSharingPageComponent() {
 
   return (
     <div className="space-y-6">
+      <ManageSharingDialog
+        open={sharedItemManaged !== null}
+        sharedItem={sharedItemManaged}
+        onClose={() => {
+          setSharedItemManaged(null);
+        }}
+      />
       {error && (
         <div className="bg-red-100 text-red-700 p-4 rounded">
           <strong>Error:</strong> {error}
@@ -136,9 +132,24 @@ export function FileSharingPageComponent() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => console.log(`Share`)}>
-                    <Share2 className="mr-2 h-4 w-4" />
-                    Manage Sharing
+                  <DropdownMenuItem
+                    onClick={async () => {
+                      console.log(`unsharing item clicked`);
+                      const response = await fetch(
+                        `${import.meta.env.VITE_SERVER_URL}/api/v1/file/share/${item.id}`,
+                        {
+                          method: "DELETE",
+                        }
+                      );
+                      const deletedItem = await response.json();
+                      console.log(`deletedItem: `, deletedItem);
+                      queryClient.invalidateQueries({
+                        queryKey: ["sharedToMe"],
+                      });
+                    }}
+                  >
+                    <XCircle className="mr-2 h-4 w-4" />
+                    Unshare Item
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

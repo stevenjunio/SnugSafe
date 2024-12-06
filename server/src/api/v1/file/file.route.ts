@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createFileController,
   deleteFileController,
+  deleteFileShareController,
   getFileController,
   getFilesController,
   getSharedFileController,
@@ -19,5 +20,6 @@ fileRouter.get("/files", getFilesController);
 fileRouter.delete("/file/:id", deleteFileController);
 fileRouter.post("/file/share", postShareRequestController);
 fileRouter.get("/file/share/:id", getSharedFileController);
+fileRouter.delete("/file/share/:id", deleteFileShareController);
 
 export default fileRouter;

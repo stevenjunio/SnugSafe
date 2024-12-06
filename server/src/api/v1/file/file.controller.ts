@@ -307,3 +307,23 @@ export const getSharedFileController = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Error getting shared file" });
   }
 };
+
+export const deleteFileShareController = async (
+  req: Request,
+  res: Response
+) => {
+  const id = req.params.id;
+  console.log(`Deleting file share with id ${id}`);
+
+  try {
+    const fileShare = await prisma.fileShare.delete({
+      where: {
+        id: id,
+      },
+    });
+    res.status(200).json(fileShare);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error deleting file share" });
+  }
+};
