@@ -3,6 +3,7 @@ import { DialogHeader, Dialog, DialogTitle, DialogContent } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { useState, useEffect } from "react";
 import { FileSystem } from "@/types/file.types";
+import { Spinner } from "./ui/spinner";
 
 export default function FileSharingDialog({
   visible,
@@ -17,6 +18,7 @@ export default function FileSharingDialog({
   const [newShareEmail, setNewShareEmail] = useState("");
   const [newShareAccess, setNewShareAccess] = useState<"view" | "edit">("view");
   const [error, setError] = useState<string | null>(null);
+  const [loadingShare, setLoadingShare] = useState(false);
 
   useEffect(() => {
     setIsShareDialogOpen(visible);
@@ -26,6 +28,8 @@ export default function FileSharingDialog({
   }, [visible, file]);
 
   const handleAddShare = async () => {
+    setLoadingShare(true);
+    setError(null);
     if (file && newShareEmail) {
       console.log(
         `Adding share for file: ${file.name} with email: ${newShareEmail} and access: ${newShareAccess}`
@@ -59,6 +63,8 @@ export default function FileSharingDialog({
       } catch (err) {
         console.error("Error sharing file:", err);
         setError("Failed to share the file");
+      } finally {
+        setLoadingShare(false);
       }
     }
   };
@@ -80,13 +86,10 @@ export default function FileSharingDialog({
               value={newShareEmail}
               onChange={(e) => setNewShareEmail(e.target.value)}
             />
+            {loadingShare && <Spinner className="w-[80%] mx-auto h-2 mt-1" />}
           </div>
           {error && <p className="text-red-500">{error}</p>}
           <Button onClick={handleAddShare}>Add Share</Button>
-          <div className="mt-4">
-            {/* <h4 className="mb-2 font-semibold">Current Shares:</h4> */}
-            {/* TO DO: implement file sharing mechanism */}
-          </div>
         </div>
       </DialogContent>
     </Dialog>
