@@ -285,6 +285,12 @@ export const getSharedFileController = async (req: Request, res: Response) => {
       return;
     }
 
+    // Allow access if the shared file's creator is the user itself
+    if (sharedFile.userFile.user.authId === user.userId) {
+      res.status(200).json(sharedFile);
+      return;
+    }
+
     const fileAccessKey = await prisma.userFileKey.findFirst({
       where: {
         userFile: {

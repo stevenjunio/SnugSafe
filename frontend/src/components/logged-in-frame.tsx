@@ -31,6 +31,11 @@ export function LoggedInFrameComponent({
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    alert("Username copied to clipboard!");
+  };
+
   const navItems = [
     { name: "Files", icon: Files, href: "/files", active: true },
     { name: "File Sharing", icon: Share2, href: "/sharing", active: true },
@@ -93,8 +98,16 @@ export function LoggedInFrameComponent({
           <h3
             className={`mb-2 text-center text-teal-500 font-extrabold uppercase`}
           >
-            {username ? username : <div className="min-h-6"></div>}{" "}
-            {/* Display Spinner if username is empty */}
+            {username ? (
+              <span
+                className="cursor-pointer hover:underline"
+                onClick={() => copyToClipboard(username)}
+              >
+                {username}
+              </span>
+            ) : (
+              <div className="min-h-6"></div>
+            )}
           </h3>
 
           <Spinner className="h-2" />
