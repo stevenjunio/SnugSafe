@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Shield, Lock, UserCheck, Zap } from "lucide-react";
 
-import snugSafeLogo from "@/assets/SnugSafe-logo.webp";
+import snugSafeLogo from "@/assets/snug-safe-logo.webp";
 import { Link } from "@tanstack/react-router";
 import { useCorbado } from "@corbado/react";
 
@@ -12,8 +12,8 @@ export function LandingPageComponent() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="px-4 lg:px-6 flex items-center">
-        <a className="flex items-center justify-center" href="#">
-          <img src={snugSafeLogo} width={100} alt="The logo for snugSafe" />
+        <a className="flex items-center justify-center mx-auto mt-4" href="#">
+          <img src={snugSafeLogo} width={300} alt="The logo for snugSafe" />
         </a>
       </header>
       <main className="flex-1">
@@ -86,8 +86,8 @@ export function LandingPageComponent() {
           </div>
         </section>
         <section id="benefits" className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-8">
+          <div className="container px-4 mx-auto md:px-6">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-8 ">
               Benefits for Your Firm
             </h2>
             <ul className="grid gap-6 lg:grid-cols-2 lg:gap-12">
@@ -135,7 +135,7 @@ export function LandingPageComponent() {
           </div>
         </section>
         <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-800">
-          <div className="container px-4 md:px-6">
+          <div className="container px-4 md:px-6 mx-auto">
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
@@ -160,7 +160,7 @@ export function LandingPageComponent() {
           </div>
         </section>
         <section id="team" className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
+          <div className="container px-4 md:px-6 mx-auto">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-8">
               Meet Our Team
             </h2>

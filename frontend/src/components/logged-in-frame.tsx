@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Files, Share2, Settings, Users, LogOut } from "lucide-react";
 import { Link, useLocation } from "@tanstack/react-router";
-import logo from "@/assets/snugsafe-logo-horizontal.png";
+import logo from "@/assets/snug-safe-word-logo.webp";
 import { useCorbado } from "@corbado/react";
 import { Spinner } from "./ui/spinner";
 
@@ -44,7 +44,7 @@ export function LoggedInFrameComponent({
   ];
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex h-screen bg-gray-100  dark:bg-gray-900">
       {/* Mobile Menu Button */}
       <div className="md:hidden fixed p-4">
         <Button onClick={toggleMobileMenu}>
@@ -96,7 +96,7 @@ export function LoggedInFrameComponent({
         </div>
         <div className="p-4">
           <h3
-            className={`mb-2 text-center text-teal-500 font-extrabold uppercase`}
+            className={`mb-2 text-center text-[#C586A1] font-extrabold uppercase`}
           >
             {username ? (
               <span
@@ -123,7 +123,7 @@ export function LoggedInFrameComponent({
                     >
                       <Button
                         variant="ghost"
-                        className={`w-full justify-start ${pathname === item.href ? "text-primary bg-gray-200" : "text-gray-600 bg-transparent"} hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800`}
+                        className={`w-full justify-start ${pathname === item.href ? "text-primary bg-gray-200" : "text-gray-600 bg-transparent"} hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800 `}
                       >
                         <item.icon className="mr-2 h-4 w-4" />
                         {item.name}
