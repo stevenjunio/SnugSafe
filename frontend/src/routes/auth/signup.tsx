@@ -45,9 +45,8 @@ function RouteComponent() {
               })
               .catch((error) => {
                 console.error("Error creating user:", error);
-                if (error.message === "User already exists") {
-                  router.navigate({ to: "/files" });
-                }
+
+                router.navigate({ to: "/files" });
               });
           } else {
             console.error("Error fetching user information", user);
