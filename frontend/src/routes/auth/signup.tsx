@@ -25,27 +25,32 @@ function RouteComponent() {
           console.log(`user from full user`, userData.val.identifiers[0].value);
           const username = userData.val.identifiers[0].value;
           // Make the API call to create a new user
-          fetch(apiEndpoint, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              authID: userData?.val.id,
-              username: username,
-            }),
-          })
-            .then((response) => response.json())
-            .then((responseData) => {
-              console.log("User created:", responseData);
-              // Navigate to the files page after successful user creation
-              router.navigate({ to: "/files" });
+          if (!userData.val.id) {
+            fetch(apiEndpoint, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                authID: userData?.val.id,
+                username: username,
+              }),
             })
-            .catch((error) => {
-              console.error("Error creating user:", error);
-            });
-        } else {
-          console.error("Error fetching user information", user);
+              .then((response) => response.json())
+              .then((responseData) => {
+                console.log("User created:", responseData);
+                // Navigate to the files page after successful user creation
+                router.navigate({ to: "/files" });
+              })
+              .catch((error) => {
+                console.error("Error creating user:", error);
+              });
+          } else if (userData.val.id) {
+            console.log(`user exists`, userData.val.id);
+            router.navigate({ to: "/files" });
+          } else {
+            console.error("Error fetching user information", user);
+          }
         }
       });
     };
@@ -54,7 +59,7 @@ function RouteComponent() {
     if (isAuthenticated) {
       handleUserSignup();
     }
-  }, [isAuthenticated, user, router]);
+  }, [isAuthenticated, user, router, getFullUser]);
 
   return (
     <CorbadoAuth
