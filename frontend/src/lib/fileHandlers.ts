@@ -32,4 +32,5 @@ export const handleOpenFile = async (
 
   // open file in new tab
   window.open(fileURL, "_blank");
+  return fileURL;
 };

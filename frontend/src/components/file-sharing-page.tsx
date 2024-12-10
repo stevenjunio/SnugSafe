@@ -34,6 +34,19 @@ export function FileSharingPageComponent() {
   const user = useCorbado().user?.sub;
   const { sessionToken } = useCorbado();
 
+  const handleClickFile = async (item: SharedItem) => {
+    if (item.userFile.type === "file" && sessionToken) {
+      const fileURL = await handleOpenFile(item, sessionToken, setError);
+      if (fileURL) {
+        console.log(`the new file URL is: `, fileURL);
+
+        window.open(fileURL, "_blank");
+      }
+    } else {
+      throw new Error("Invalid file type");
+    }
+  };
+
   const { data: sharedToMe } = useQuery({
     queryKey: ["sharedToMe"],
     refetchInterval: 5000,
@@ -105,11 +118,7 @@ export function FileSharingPageComponent() {
                 <span
                   className="font-medium truncate cursor-pointer hover:underline"
                   onClick={() => {
-                    if (item.userFile.type === "file" && sessionToken) {
-                      handleOpenFile(item, sessionToken, setError);
-                    } else {
-                      throw new Error("Invalid file type");
-                    }
+                    handleClickFile(item);
                   }}
                 >
                   {item.userFile.name}
