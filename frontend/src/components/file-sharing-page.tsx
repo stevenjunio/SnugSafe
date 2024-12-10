@@ -39,18 +39,6 @@ export function FileSharingPageComponent() {
       const fileURL = await handleOpenFile(item, sessionToken, setError);
       if (fileURL) {
         console.log(`the new file URL is: `, fileURL);
-
-        // Detect if the user is on mobile Safari
-        const isMobileSafari = /iP(ad|hone|od).+Version\/[\d.]+.*Safari/i.test(
-          navigator.userAgent
-        );
-
-        if (isMobileSafari) {
-          // Use window.location.href to open the file URL on mobile Safari
-          window.location.href = fileURL;
-        } else {
-          // Open the file in a new tab
-        }
       }
     } else {
       throw new Error("Invalid file type");
