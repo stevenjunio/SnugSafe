@@ -21,6 +21,9 @@
 #root {
   width: 100vw;
 }
+.cb-text-2.cb-input {
+  font-size: 16px;
+}
 
 a {
   font-weight: 500;

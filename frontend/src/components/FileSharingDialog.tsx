@@ -86,7 +86,7 @@ export default function FileSharingDialog({
               value={newShareEmail}
               onChange={(e) => setNewShareEmail(e.target.value)}
             />
-            {loadingShare && <Spinner className="w-[80%] mx-auto h-2 mt-1" />}
+            {loadingShare && <Spinner className="w-[79.9%] mx-auto h-2 mt-1" />}
           </div>
           {error && <p className="text-red-500">{error}</p>}
           <Button onClick={handleAddShare}>Add Share</Button>

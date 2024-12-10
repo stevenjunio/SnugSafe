@@ -36,6 +36,7 @@ export function FileSharingPageComponent() {
 
   const { data: sharedToMe } = useQuery({
     queryKey: ["sharedToMe"],
+    refetchInterval: 5000,
     queryFn: async () => {
       console.log(`Fetching files shared to me`);
       const response = await fetch(
