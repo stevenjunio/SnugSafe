@@ -25,7 +25,8 @@ function RouteComponent() {
           console.log(`user from full user`, userData.val.identifiers[0].value);
           const username = userData.val.identifiers[0].value;
           // Make the API call to create a new user
-          if (!userData.val.id) {
+          if (userData.val.id) {
+            console.log(`Attempting to create a new user`);
             fetch(apiEndpoint, {
               method: "POST",
               headers: {
@@ -44,10 +45,10 @@ function RouteComponent() {
               })
               .catch((error) => {
                 console.error("Error creating user:", error);
+                if (error.message === "User already exists") {
+                  router.navigate({ to: "/files" });
+                }
               });
-          } else if (userData.val.id) {
-            console.log(`user exists`, userData.val.id);
-            router.navigate({ to: "/files" });
           } else {
             console.error("Error fetching user information", user);
           }
