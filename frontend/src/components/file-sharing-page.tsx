@@ -39,9 +39,14 @@ export function FileSharingPageComponent() {
       const fileURL = await handleOpenFile(item, sessionToken, setError);
       if (fileURL) {
         console.log(`the new file URL is: `, fileURL);
-        setTimeout(() => {
-          window.open(fileURL, "_blank");
-        }, 0);
+        // Create a temporary anchor element and trigger a click event
+        const anchor = document.createElement("a");
+        anchor.href = fileURL;
+        anchor.target = "_blank";
+        anchor.rel = "noopener noreferrer";
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
       }
     } else {
       throw new Error("Invalid file type");
