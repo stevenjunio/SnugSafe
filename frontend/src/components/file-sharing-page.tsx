@@ -39,8 +39,9 @@ export function FileSharingPageComponent() {
       const fileURL = await handleOpenFile(item, sessionToken, setError);
       if (fileURL) {
         console.log(`the new file URL is: `, fileURL);
-
-        window.open(fileURL, "_blank");
+        setTimeout(() => {
+          window.open(fileURL, "_blank");
+        }, 0);
       }
     } else {
       throw new Error("Invalid file type");
