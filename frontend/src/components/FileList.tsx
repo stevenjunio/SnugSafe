@@ -96,8 +96,18 @@ export const FileList = () => {
     console.log(`openining file`, file);
     const fileURL = await getFileURL(file.id);
 
-    // open file in new tab
-    window.open(fileURL, "_blank");
+    // Detect if the user is on mobile Safari
+    const isMobileSafari = /iP(ad|hone|od).+Version\/[\d.]+.*Safari/i.test(
+      navigator.userAgent
+    );
+
+    if (isMobileSafari) {
+      // Use window.location.href to open the file URL on mobile Safari
+      window.location.href = fileURL;
+    } else {
+      // open file in new tab
+      window.open(fileURL, "_blank");
+    }
   };
   const handleDeleteFile = async (item: FileSystem) => {
     if (item.itemType === "file") {
