@@ -39,14 +39,18 @@ export function FileSharingPageComponent() {
       const fileURL = await handleOpenFile(item, sessionToken, setError);
       if (fileURL) {
         console.log(`the new file URL is: `, fileURL);
-        // Create a temporary anchor element and trigger a click event
-        const anchor = document.createElement("a");
-        anchor.href = fileURL;
-        anchor.target = "_blank";
-        anchor.rel = "noopener noreferrer";
-        document.body.appendChild(anchor);
-        anchor.click();
-        document.body.removeChild(anchor);
+
+        // Detect if the user is on mobile Safari
+        const isMobileSafari = /iP(ad|hone|od).+Version\/[\d.]+.*Safari/i.test(
+          navigator.userAgent
+        );
+
+        if (isMobileSafari) {
+          // Use window.location.href to open the file URL on mobile Safari
+          window.location.href = fileURL;
+        } else {
+          // Open the file in a new tab
+        }
       }
     } else {
       throw new Error("Invalid file type");
