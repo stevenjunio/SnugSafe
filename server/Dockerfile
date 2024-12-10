@@ -1,4 +1,4 @@
-FROM node:22-alpine
+FROM node:23-alpine
 ARG DB_HOST=db
 
 ENV key=${DB_HOST}
@@ -11,9 +11,13 @@ WORKDIR /app
 
 COPY package*.json ./
 
+
 RUN npm install
+RUN apk add openssl
+
 
 COPY . .
+
 
 RUN npx prisma generate
 
