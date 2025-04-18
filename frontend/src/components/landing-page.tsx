@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Shield, Lock, UserCheck, Zap } from "lucide-react";
+
+import { Lock, UserCheck } from "lucide-react";
 
 import snugSafeLogo from "@/assets/snug-safe-logo.webp";
 import { Link } from "@tanstack/react-router";
