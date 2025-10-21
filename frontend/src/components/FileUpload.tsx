@@ -1,23 +1,32 @@
+import { useRef } from "react";
 import { Upload } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+
 export const FileUpload = ({
   onFileUpload,
 }: {
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}) => (
-  <>
-    <Button variant="outline" asChild>
-      <label htmlFor="file-upload" className="cursor-pointer">
+}) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  return (
+    <>
+      <Button variant="outline" onClick={handleButtonClick}>
         <Upload className="mr-2 h-4 w-4" />
         Upload File
-      </label>
-    </Button>
-    <Input
-      id="file-upload"
-      type="file"
-      className="hidden"
-      onChange={onFileUpload}
-    />
-  </>
-);
+      </Button>
+      <Input
+        ref={fileInputRef}
+        id="file-upload"
+        type="file"
+        className="hidden"
+        onChange={onFileUpload}
+      />
+    </>
+  );
+};
