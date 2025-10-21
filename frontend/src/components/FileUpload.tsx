@@ -7,14 +7,12 @@ export const FileUpload = ({
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => (
   <>
-    <label htmlFor="file-upload">
-      <Button variant="outline" asChild>
-        <span>
-          <Upload className="mr-2 h-4 w-4" />
-          Upload File
-        </span>
-      </Button>
-    </label>
+    <Button variant="outline" asChild>
+      <label htmlFor="file-upload" className="cursor-pointer">
+        <Upload className="mr-2 h-4 w-4" />
+        Upload File
+      </label>
+    </Button>
     <Input
       id="file-upload"
       type="file"
