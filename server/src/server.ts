@@ -6,6 +6,7 @@ import { authMiddleware } from "./middleware/auth.middleware";
 import fileRouter from "./api/v1/file/file.route";
 import folderRouter from "./api/v1/folder/folder.route";
 import fileSystemRouter from "./api/v1/filesystem/filesystem.router";
+import tagRouter from "./api/v1/tag/tag.route";
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -29,6 +30,7 @@ app.get("/", authMiddleware, (req, res) => {
 app.use("/api/v1", authRouter);
 app.use("/api/v1", fileRouter);
 app.use("/api/v1", folderRouter);
+app.use("/api/v1", tagRouter);
 app.use("/api/v1", fileSystemRouter);
 
 app.listen(3000, "0.0.0.0", function () {

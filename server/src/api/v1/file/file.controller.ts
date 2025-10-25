@@ -67,24 +67,100 @@ export const getFileController = async (req: Request, res: Response) => {
 
 export const getFilesController = async (req: Request, res: Response) => {
   const user = req.query.user as string;
+  const search = req.query.search as string;
+  const folderId = req.query.folderId as string;
+  const tags = req.query.tags as string; // comma-separated tag IDs
+  const fileTypes = req.query.fileTypes as string; // comma-separated file types
+  const sortBy = req.query.sortBy as string || "name"; // name, uploadDate, size, type
+  const sortOrder = req.query.sortOrder as string || "asc"; // asc, desc
 
-  const limit = parseInt(req.query.limit as string) || 10; // Default limit to 10
+  const limit = parseInt(req.query.limit as string) || 100; // Default limit to 100
   const page = parseInt(req.query.page as string) || 1; // Default page to 1
   const skip = (page - 1) * limit;
 
   console.log(`Getting files for user ${user}`);
 
   try {
+    // Build where clause
+    const whereClause: any = {
+      user: {
+        authId: user,
+      },
+    };
+
+    // Add folder filter
+    if (folderId) {
+      whereClause.folderId = folderId;
+    } else if (req.query.rootOnly === "true") {
+      whereClause.folderId = null;
+    }
+
+    // Add search filter
+    if (search) {
+      whereClause.name = {
+        contains: search,
+        mode: "insensitive",
+      };
+    }
+
+    // Add file type filter
+    if (fileTypes) {
+      const types = fileTypes.split(",");
+      whereClause.type = {
+        in: types,
+      };
+    }
+
+    // Add tag filter
+    if (tags) {
+      const tagIds = tags.split(",");
+      whereClause.fileTags = {
+        some: {
+          tagId: {
+            in: tagIds,
+          },
+        },
+      };
+    }
+
+    // Build orderBy clause
+    const orderByClause: any = {};
+    if (sortBy === "uploadDate") {
+      orderByClause.uploadDate = sortOrder;
+    } else if (sortBy === "size") {
+      orderByClause.size = sortOrder;
+    } else if (sortBy === "type") {
+      orderByClause.type = sortOrder;
+    } else {
+      orderByClause.name = sortOrder;
+    }
+
     const files = await prisma.userFile.findMany({
-      where: {
-        user: {
-          authId: user,
+      where: whereClause,
+      include: {
+        fileTags: {
+          include: {
+            tag: true,
+          },
+        },
+        folder: {
+          select: {
+            id: true,
+            name: true,
+          },
         },
       },
+      orderBy: orderByClause,
       take: limit,
       skip: skip,
     });
-    res.status(200).json(files);
+
+    // Get total count for pagination
+    const total = await prisma.userFile.count({
+      where: whereClause,
+    });
+
+    res.status(200).json({ files, total, page, limit });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Error getting files" });
@@ -331,5 +407,178 @@ export const deleteFileShareController = async (
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Error deleting file share" });
+  }
+};
+
+// Bulk operations
+export const bulkDeleteFilesController = async (req: Request, res: Response) => {
+  const { fileIds } = req.body;
+
+  if (!fileIds || !Array.isArray(fileIds) || fileIds.length === 0) {
+    res.status(400).json({ error: "fileIds array is required" });
+    return;
+  }
+
+  console.log(`Bulk deleting ${fileIds.length} files`);
+
+  try {
+    // Get files to delete from S3
+    const files = await prisma.userFile.findMany({
+      where: {
+        id: {
+          in: fileIds,
+        },
+      },
+    });
+
+    // Delete from database
+    const deleteResult = await prisma.userFile.deleteMany({
+      where: {
+        id: {
+          in: fileIds,
+        },
+      },
+    });
+
+    // Delete from S3
+    const s3DeletePromises = files.map((file) => {
+      const deleteCommand = new DeleteObjectCommand({
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: file.id,
+      });
+      return s3Client.send(deleteCommand);
+    });
+
+    await Promise.all(s3DeletePromises);
+
+    res.status(200).json({
+      message: `Successfully deleted ${deleteResult.count} files`,
+      count: deleteResult.count
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error bulk deleting files" });
+  }
+};
+
+export const bulkMoveFilesController = async (req: Request, res: Response) => {
+  const { fileIds, folderId } = req.body;
+
+  if (!fileIds || !Array.isArray(fileIds) || fileIds.length === 0) {
+    res.status(400).json({ error: "fileIds array is required" });
+    return;
+  }
+
+  console.log(`Bulk moving ${fileIds.length} files to folder ${folderId || "root"}`);
+
+  try {
+    const updateResult = await prisma.userFile.updateMany({
+      where: {
+        id: {
+          in: fileIds,
+        },
+      },
+      data: {
+        folderId: folderId || null,
+      },
+    });
+
+    res.status(200).json({
+      message: `Successfully moved ${updateResult.count} files`,
+      count: updateResult.count
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error bulk moving files" });
+  }
+};
+
+export const bulkTagFilesController = async (req: Request, res: Response) => {
+  const { fileIds, tagId } = req.body;
+
+  if (!fileIds || !Array.isArray(fileIds) || fileIds.length === 0) {
+    res.status(400).json({ error: "fileIds array is required" });
+    return;
+  }
+
+  if (!tagId) {
+    res.status(400).json({ error: "tagId is required" });
+    return;
+  }
+
+  console.log(`Bulk tagging ${fileIds.length} files with tag ${tagId}`);
+
+  try {
+    // Create file tags for all files, skip if already exists
+    const createPromises = fileIds.map((fileId) =>
+      prisma.fileTag.upsert({
+        where: {
+          fileId_tagId: {
+            fileId,
+            tagId,
+          },
+        },
+        create: {
+          fileId,
+          tagId,
+        },
+        update: {}, // Do nothing if already exists
+      })
+    );
+
+    const results = await Promise.all(createPromises);
+
+    res.status(200).json({
+      message: `Successfully tagged ${results.length} files`,
+      count: results.length
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error bulk tagging files" });
+  }
+};
+
+// Update file to move it to a folder
+export const updateFileController = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { folderId, name } = req.body;
+
+  console.log(`Updating file ${id}`);
+
+  try {
+    const updateData: any = {};
+
+    if (folderId !== undefined) {
+      updateData.folderId = folderId;
+    }
+
+    if (name) {
+      updateData.name = name;
+    }
+
+    const file = await prisma.userFile.update({
+      where: {
+        id: id,
+      },
+      data: updateData,
+      include: {
+        fileTags: {
+          include: {
+            tag: true,
+          },
+        },
+        folder: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json(file);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error updating file" });
   }
 };
