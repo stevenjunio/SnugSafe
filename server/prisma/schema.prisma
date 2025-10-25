@@ -25,17 +25,23 @@ model user {
   fileShare   fileShare[]
   userId      String?
   userKeys    userFileKey[]
+  tags        tag[]
 }
 
 model userFile {
-  id        String        @id @unique
-  userId    String
-  user      user          @relation(fields: [userId], references: [id])
-  name      String
-  size      Int
-  type      String
-  fileShare fileShare[]
-  userKeys  userFileKey[]
+  id           String        @id @unique
+  userId       String
+  user         user          @relation(fields: [userId], references: [id])
+  name         String
+  size         Int
+  type         String
+  folderId     String?
+  folder       userFolder?   @relation(fields: [folderId], references: [id])
+  uploadDate   DateTime      @default(now())
+  lastModified DateTime      @updatedAt
+  fileShare    fileShare[]
+  userKeys     userFileKey[]
+  fileTags     fileTag[]
 }
 
 model fileUrl {
@@ -52,6 +58,8 @@ model userFolder {
   childrenFolder userFolder[] @relation("ParentFolderRelation")
   userId         String
   user           user         @relation(fields: [userId], references: [authId])
+  files          userFile[]
+  createdAt      DateTime     @default(now())
 }
 
 model fileShare {
@@ -69,4 +77,26 @@ model userFileKey {
   key        String
   user       user     @relation(fields: [userId], references: [id])
   userId     String
+}
+
+model tag {
+  id        String    @id @default(uuid())
+  name      String
+  color     String?
+  userId    String
+  user      user      @relation(fields: [userId], references: [id])
+  fileTags  fileTag[]
+  createdAt DateTime  @default(now())
+
+  @@unique([userId, name])
+}
+
+model fileTag {
+  id     String   @id @default(uuid())
+  fileId String
+  tagId  String
+  file   userFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  tag    tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([fileId, tagId])
 }
