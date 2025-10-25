@@ -8,6 +8,7 @@ import { FileList } from "./FileList";
 import { useUserFiles } from "@/hooks/useUserFiles";
 import { FileItem } from "@/types/file.types";
 import { CreateFolderDialog } from "./CreateFolderDialog";
+import { BunnyRunner } from "./ui/BunnyRunner";
 
 export function FilePageComponent() {
   const { user } = useCorbado();
@@ -53,10 +54,7 @@ export function FilePageComponent() {
         <div>No files found</div>
       )}
       {uploadFileMutation.isPending && (
-        <div>
-          Uploading...
-          <span className="font-bold">{uploadFileMutation.variables.name}</span>
-        </div>
+        <BunnyRunner fileName={uploadFileMutation.variables.name} />
       )}
       {data && data.length > 0 && <FileList />}
     </div>
