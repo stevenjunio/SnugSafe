@@ -3,34 +3,33 @@ import './MenuBunny.css';
 
 interface MenuBunnyProps {
   activeIndex: number;
-  isLoading?: boolean;
 }
 
-export const MenuBunny: React.FC<MenuBunnyProps> = ({ activeIndex, isLoading = false }) => {
-  const [position, setPosition] = useState(0);
+export const MenuBunny: React.FC<MenuBunnyProps> = ({ activeIndex }) => {
+  const [position, setPosition] = useState(activeIndex);
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
-    if (isLoading) {
-      // Bunny runs to the menu item position
+    // When activeIndex changes, bunny runs to new position
+    if (position !== activeIndex) {
       setIsRunning(true);
       setPosition(activeIndex);
-    } else {
-      // After loading, bunny runs back to home position
+
+      // After transition completes, bunny returns to sitting state
       const timer = setTimeout(() => {
-        setPosition(0);
         setIsRunning(false);
-      }, 500);
+      }, 650); // Slightly longer than transition time
+
       return () => clearTimeout(timer);
     }
-  }, [activeIndex, isLoading]);
+  }, [activeIndex, position]);
 
   return (
     <div className="menu-bunny-container">
       <div
         className={`menu-bunny ${isRunning ? 'running' : 'sitting'}`}
         style={{
-          transform: `translateY(${position * 60}px)`,
+          transform: `translateY(${position * 48}px)`,
         }}
       >
         <svg

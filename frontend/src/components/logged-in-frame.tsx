@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Files, Share2, Settings, Users, LogOut } from "lucide-react";
@@ -15,8 +15,6 @@ export function LoggedInFrameComponent({
   const { pathname } = useLocation();
   const { logout } = useCorbado();
   const [username, setUsername] = useState("");
-  const [isPageLoading, setIsPageLoading] = useState(false);
-  const [previousPathname, setPreviousPathname] = useState(pathname);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const userInfo = useCorbado();
@@ -28,21 +26,6 @@ export function LoggedInFrameComponent({
       console.error("Error fetching user information", user);
     }
   });
-
-  // Track page navigation for bunny animation
-  useEffect(() => {
-    if (pathname !== previousPathname) {
-      setIsPageLoading(true);
-      setPreviousPathname(pathname);
-
-      // Simulate page load completion
-      const timer = setTimeout(() => {
-        setIsPageLoading(false);
-      }, 800);
-
-      return () => clearTimeout(timer);
-    }
-  }, [pathname, previousPathname]);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -129,7 +112,6 @@ export function LoggedInFrameComponent({
 
           <MenuBunny
             activeIndex={navItems.findIndex(item => item.href === pathname)}
-            isLoading={isPageLoading}
           />
 
           <ul className="mt-2 space-y-2">
