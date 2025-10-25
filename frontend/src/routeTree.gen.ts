@@ -14,6 +14,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as HomeImport } from './routes/home'
+import { Route as DemoImport } from './routes/demo'
 import { Route as AuthSignupImport } from './routes/auth/signup'
 import { Route as LayoutLoggedInImport } from './routes/_layout/_logged-in'
 import { Route as LayoutLoggedInSharingImport } from './routes/_layout/_logged-in.sharing'
@@ -35,6 +36,12 @@ const AboutLazyRoute = AboutLazyImport.update({
 const HomeRoute = HomeImport.update({
   id: '/home',
   path: '/home',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DemoRoute = DemoImport.update({
+  id: '/demo',
+  path: '/demo',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -76,6 +83,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoImport
       parentRoute: typeof rootRoute
     }
     '/home': {
@@ -141,6 +155,7 @@ const LayoutLoggedInRouteWithChildren = LayoutLoggedInRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/demo': typeof DemoRoute
   '/home': typeof HomeRoute
   '/about': typeof AboutLazyRoute
   '': typeof LayoutLoggedInRouteWithChildren
@@ -151,6 +166,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/demo': typeof DemoRoute
   '/home': typeof HomeRoute
   '/about': typeof AboutLazyRoute
   '': typeof LayoutLoggedInRouteWithChildren
@@ -162,6 +178,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
+  '/demo': typeof DemoRoute
   '/home': typeof HomeRoute
   '/about': typeof AboutLazyRoute
   '/_layout/_logged-in': typeof LayoutLoggedInRouteWithChildren
@@ -174,6 +191,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/demo'
     | '/home'
     | '/about'
     | ''
@@ -181,10 +199,19 @@ export interface FileRouteTypes {
     | '/files'
     | '/sharing'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/home' | '/about' | '' | '/auth/signup' | '/files' | '/sharing'
+  to:
+    | '/'
+    | '/demo'
+    | '/home'
+    | '/about'
+    | ''
+    | '/auth/signup'
+    | '/files'
+    | '/sharing'
   id:
     | '__root__'
     | '/'
+    | '/demo'
     | '/home'
     | '/about'
     | '/_layout/_logged-in'
@@ -196,6 +223,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  DemoRoute: typeof DemoRoute
   HomeRoute: typeof HomeRoute
   AboutLazyRoute: typeof AboutLazyRoute
   LayoutLoggedInRoute: typeof LayoutLoggedInRouteWithChildren
@@ -204,6 +232,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  DemoRoute: DemoRoute,
   HomeRoute: HomeRoute,
   AboutLazyRoute: AboutLazyRoute,
   LayoutLoggedInRoute: LayoutLoggedInRouteWithChildren,
@@ -221,6 +250,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/demo",
         "/home",
         "/about",
         "/_layout/_logged-in",
@@ -229,6 +259,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/demo": {
+      "filePath": "demo.tsx"
     },
     "/home": {
       "filePath": "home.tsx"

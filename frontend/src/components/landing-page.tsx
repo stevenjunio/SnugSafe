@@ -33,8 +33,16 @@ export function LandingPageComponent() {
               <div className="space-x-4">
                 <Button>
                   <Link
-                    to={isAuthenticated ? "/files" : "/auth/signup"}
+                    to="/demo"
                     className="hover:text-white text-white"
+                  >
+                    Try Now
+                  </Link>
+                </Button>
+                <Button variant="outline">
+                  <Link
+                    to={isAuthenticated ? "/files" : "/auth/signup"}
+                    className="hover:text-white"
                   >
                     {isAuthenticated ? `Dashboard` : "Sign up"}
                   </Link>
@@ -109,10 +117,18 @@ export function LandingPageComponent() {
               <div className="space-x-4 mt-6">
                 <Button>
                   <Link
-                    to={isAuthenticated ? "/files" : "/auth/signup"}
+                    to="/demo"
                     className="hover:text-white text-white"
                   >
-                    {isAuthenticated ? `Dashboard` : "Try it now"}
+                    Try Demo
+                  </Link>
+                </Button>
+                <Button variant="outline">
+                  <Link
+                    to={isAuthenticated ? "/files" : "/auth/signup"}
+                    className="hover:text-white"
+                  >
+                    {isAuthenticated ? `Dashboard` : "Sign Up Free"}
                   </Link>
                 </Button>
               </div>
