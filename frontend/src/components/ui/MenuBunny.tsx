@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './MenuBunny.css';
 
 interface MenuBunnyProps {
@@ -8,21 +8,27 @@ interface MenuBunnyProps {
 export const MenuBunny: React.FC<MenuBunnyProps> = ({ activeIndex }) => {
   const [position, setPosition] = useState(activeIndex);
   const [isRunning, setIsRunning] = useState(false);
+  const isFirstMount = useRef(true);
 
   useEffect(() => {
-    // When activeIndex changes, bunny runs to new position
-    if (position !== activeIndex) {
-      setIsRunning(true);
+    // On first mount, just set position without running animation
+    if (isFirstMount.current) {
       setPosition(activeIndex);
-
-      // After transition completes, bunny returns to sitting state
-      const timer = setTimeout(() => {
-        setIsRunning(false);
-      }, 650); // Slightly longer than transition time
-
-      return () => clearTimeout(timer);
+      isFirstMount.current = false;
+      return;
     }
-  }, [activeIndex, position]);
+
+    // When activeIndex changes, bunny runs to new position
+    setIsRunning(true);
+    setPosition(activeIndex);
+
+    // After transition completes, bunny returns to sitting state
+    const timer = setTimeout(() => {
+      setIsRunning(false);
+    }, 650); // Slightly longer than transition time
+
+    return () => clearTimeout(timer);
+  }, [activeIndex]);
 
   return (
     <div className="menu-bunny-container">
