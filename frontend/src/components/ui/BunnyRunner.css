@@ -1,0 +1,276 @@
+.bunny-runner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(to bottom, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 12px;
+  border: 2px solid #C586A1;
+  box-shadow: 0 4px 6px rgba(197, 134, 161, 0.1);
+}
+
+.race-track {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  height: 80px;
+  background: linear-gradient(to bottom, #86efac 0%, #4ade80 100%);
+  border-radius: 8px;
+  border: 2px solid #22c55e;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+/* Grass effect */
+.race-track::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: repeating-linear-gradient(
+    90deg,
+    #16a34a 0px,
+    #16a34a 4px,
+    #15803d 4px,
+    #15803d 8px
+  );
+}
+
+/* Flags */
+.flag {
+  position: relative;
+  z-index: 1;
+}
+
+.flag-pole {
+  width: 3px;
+  height: 50px;
+  background: #7c3aed;
+  border-radius: 2px;
+}
+
+.flag-banner {
+  position: absolute;
+  top: 0;
+  left: 3px;
+  width: 25px;
+  height: 20px;
+  animation: wave-flag 1s ease-in-out infinite;
+  transform-origin: left center;
+}
+
+.flag-banner.start {
+  background: #C586A1;
+  clip-path: polygon(0 0, 100% 0, 85% 50%, 100% 100%, 0 100%);
+}
+
+.flag-banner.finish {
+  background: white;
+  clip-path: polygon(0 0, 100% 0, 85% 50%, 100% 100%, 0 100%);
+  overflow: hidden;
+}
+
+.checkered-pattern {
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(45deg, #333 25%, transparent 25%),
+    linear-gradient(-45deg, #333 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #333 75%),
+    linear-gradient(-45deg, transparent 75%, #333 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+}
+
+@keyframes wave-flag {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(8deg);
+  }
+}
+
+/* Bunny animation */
+.bunny-wrapper {
+  position: absolute;
+  left: 50px;
+  animation: run-to-finish 3s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes run-to-finish {
+  0% {
+    left: 50px;
+  }
+  50% {
+    left: calc(100% - 110px);
+  }
+  100% {
+    left: 50px;
+  }
+}
+
+.bunny {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Bunny parts animations */
+.ear {
+  animation: ear-wiggle 0.3s ease-in-out infinite;
+}
+
+.left-ear {
+  animation-delay: 0s;
+}
+
+.right-ear {
+  animation-delay: 0.15s;
+}
+
+@keyframes ear-wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-5deg);
+  }
+}
+
+.leg {
+  animation: leg-hop 0.3s ease-in-out infinite;
+}
+
+.front-leg {
+  animation-delay: 0s;
+}
+
+.back-leg {
+  animation-delay: 0.15s;
+}
+
+@keyframes leg-hop {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.tail {
+  animation: tail-wiggle 0.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes tail-wiggle {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.eye {
+  animation: blink 3s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 48%, 52%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.1);
+  }
+}
+
+/* Upload message */
+.upload-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: #334155;
+}
+
+.uploading-text {
+  font-weight: 500;
+  color: #C586A1;
+}
+
+.dots {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.dots span {
+  animation: dot-blink 1.4s ease-in-out infinite;
+  opacity: 0;
+}
+
+.dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dot-blink {
+  0%, 20% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.file-name {
+  font-weight: 700;
+  color: #1e293b;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .bunny-runner-container {
+    padding: 1rem;
+  }
+
+  .race-track {
+    height: 60px;
+  }
+
+  .bunny {
+    width: 45px;
+    height: 45px;
+  }
+
+  .upload-message {
+    font-size: 0.875rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .file-name {
+    max-width: 200px;
+  }
+}

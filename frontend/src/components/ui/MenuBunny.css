@@ -1,0 +1,216 @@
+.menu-bunny-container {
+  position: relative;
+  width: 100%;
+  height: 60px;
+  overflow: visible;
+  padding: 10px 0;
+}
+
+.menu-bunny {
+  position: absolute;
+  left: 10px;
+  top: 0;
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 2px 4px rgba(197, 134, 161, 0.2));
+}
+
+.menu-bunny svg {
+  display: block;
+}
+
+/* Sitting state - gentle idle animations */
+.menu-bunny.sitting .menu-ear {
+  animation: gentle-ear-wiggle 2s ease-in-out infinite;
+}
+
+.menu-bunny.sitting .left-ear {
+  animation-delay: 0s;
+}
+
+.menu-bunny.sitting .right-ear {
+  animation-delay: 1s;
+}
+
+@keyframes gentle-ear-wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  5% {
+    transform: rotate(-3deg);
+  }
+  10% {
+    transform: rotate(0deg);
+  }
+}
+
+.menu-bunny.sitting .menu-tail {
+  animation: gentle-tail-wiggle 3s ease-in-out infinite;
+}
+
+@keyframes gentle-tail-wiggle {
+  0%, 100% {
+    transform: scale(1) translateX(0);
+  }
+  50% {
+    transform: scale(1.05) translateX(1px);
+  }
+}
+
+.menu-bunny.sitting .menu-eye {
+  animation: content-blink 4s ease-in-out infinite;
+}
+
+@keyframes content-blink {
+  0%, 48%, 52%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.1);
+  }
+}
+
+/* Running state - energetic animations */
+.menu-bunny.running .menu-ear {
+  animation: running-ear-flap 0.2s ease-in-out infinite;
+}
+
+@keyframes running-ear-flap {
+  0%, 100% {
+    transform: rotate(-10deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+}
+
+.menu-bunny.running .menu-leg {
+  animation: running-leg-motion 0.2s ease-in-out infinite;
+}
+
+.menu-bunny.running .front-leg {
+  animation-delay: 0s;
+}
+
+.menu-bunny.running .back-leg {
+  animation-delay: 0.1s;
+}
+
+@keyframes running-leg-motion {
+  0%, 100% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(-4px) scaleY(0.9);
+  }
+}
+
+.menu-bunny.running .menu-tail {
+  animation: running-tail-bounce 0.2s ease-in-out infinite;
+}
+
+@keyframes running-tail-bounce {
+  0%, 100% {
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    transform: scale(1.15) translateY(-2px);
+  }
+}
+
+/* Hearts when sitting */
+.bunny-hearts {
+  position: absolute;
+  top: -10px;
+  right: -5px;
+  animation: float-heart 2s ease-in-out infinite;
+}
+
+.heart {
+  font-size: 12px;
+  display: inline-block;
+  animation: pulse-heart 1.5s ease-in-out infinite;
+}
+
+@keyframes float-heart {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes pulse-heart {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Speed lines when running */
+.speed-lines {
+  position: absolute;
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.speed-line {
+  display: block;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #C586A1, transparent);
+  border-radius: 1px;
+  animation: speed-line-move 0.3s ease-in-out infinite;
+}
+
+.speed-line:nth-child(1) {
+  width: 15px;
+  animation-delay: 0s;
+}
+
+.speed-line:nth-child(2) {
+  width: 20px;
+  animation-delay: 0.1s;
+}
+
+.speed-line:nth-child(3) {
+  width: 12px;
+  animation-delay: 0.2s;
+}
+
+@keyframes speed-line-move {
+  0% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .menu-bunny svg {
+    width: 35px;
+    height: 35px;
+  }
+
+  .bunny-hearts {
+    top: -8px;
+  }
+
+  .heart {
+    font-size: 10px;
+  }
+}
