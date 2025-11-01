@@ -5,7 +5,8 @@
   "scripts": {
     "start": "ts-node-dev src/server.ts",
     "build": "tsc",
-    "dev": "ts-node-dev --respawn src/server.ts"
+    "dev": "ts-node-dev --respawn src/server.ts",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
