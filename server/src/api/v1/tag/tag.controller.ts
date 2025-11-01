@@ -1,5 +1,7 @@
+import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
-import prisma from "../../../lib/prisma";
+
+const prisma = new PrismaClient();
 
 // Get all tags for a user
 export const getTags = async (req: Request, res: Response) => {
