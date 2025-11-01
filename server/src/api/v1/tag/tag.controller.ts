@@ -173,7 +173,7 @@ export const getFilesByTag = async (req: Request, res: Response) => {
       },
     });
 
-    const files = fileTags.map((ft) => ft.file);
+    const files = fileTags.map((ft: any) => ft.file);
     return res.status(200).json(files);
   } catch (error) {
     console.error("Error fetching files by tag:", error);

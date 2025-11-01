@@ -51,7 +51,6 @@ export function useUpdateTag() {
       id,
       name,
       color,
-      userId,
     }: {
       id: string;
       name?: string;
@@ -79,7 +78,7 @@ export function useDeleteTag() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, userId }: { id: string; userId: string }) => {
+    mutationFn: async ({ id }: { id: string; userId: string }) => {
       const response = await fetch(`${API_BASE_URL}/api/v1/tag/${id}`, {
         method: "DELETE",
       });

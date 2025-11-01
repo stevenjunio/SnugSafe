@@ -38,7 +38,7 @@ model userFile {
   folderId     String?
   folder       userFolder?   @relation(fields: [folderId], references: [id])
   uploadDate   DateTime      @default(now())
-  lastModified DateTime      @updatedAt
+  lastModified DateTime      @default(now()) @updatedAt
   fileShare    fileShare[]
   userKeys     userFileKey[]
   fileTags     fileTag[]
