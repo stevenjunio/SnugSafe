@@ -9,17 +9,17 @@ import {
   getFilesByTag,
 } from "./tag.controller";
 
-const router = Router();
+const tagRouter = Router();
 
 // Tag CRUD
-router.get("/tags", getTags);
-router.post("/tag", createTag);
-router.put("/tag/:id", updateTag);
-router.delete("/tag/:id", deleteTag);
+tagRouter.get("/tags", getTags);
+tagRouter.post("/tag", createTag);
+tagRouter.put("/tag/:id", updateTag);
+tagRouter.delete("/tag/:id", deleteTag);
 
 // File-Tag associations
-router.post("/tag/file", addTagToFile);
-router.delete("/tag/file", removeTagFromFile);
-router.get("/tag/:tagId/files", getFilesByTag);
+tagRouter.post("/tag/file", addTagToFile);
+tagRouter.delete("/tag/file", removeTagFromFile);
+tagRouter.get("/tag/:tagId/files", getFilesByTag);
 
-export default router;
+export default tagRouter;
