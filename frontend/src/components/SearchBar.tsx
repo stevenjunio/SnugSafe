@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Filter, X, FileType, Calendar, Tag as TagIcon } from "lucide-react";
+import { Search, Filter, X, FileType, Tag as TagIcon } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import {

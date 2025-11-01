@@ -62,36 +62,6 @@ export default function BulkActionsToolbar({
     }
   };
 
-  const handleBulkMove = async () => {
-    if (!selectedFolderId) return;
-
-    try {
-      await bulkMove.mutateAsync({
-        fileIds: selectedFileIds,
-        folderId: selectedFolderId === "root" ? null : selectedFolderId,
-      });
-      onClearSelection();
-      setSelectedFolderId(null);
-    } catch (error) {
-      console.error("Failed to move files:", error);
-    }
-  };
-
-  const handleBulkTag = async () => {
-    if (!selectedTagId) return;
-
-    try {
-      await bulkTag.mutateAsync({
-        fileIds: selectedFileIds,
-        tagId: selectedTagId,
-      });
-      setSelectedTagId(null);
-      // Don't clear selection so user can continue tagging
-    } catch (error) {
-      console.error("Failed to tag files:", error);
-    }
-  };
-
   if (selectedFileIds.length === 0) {
     return null;
   }

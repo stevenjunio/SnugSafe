@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useCorbado } from "@corbado/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, FolderPlus, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 import uploadFile from "@/lib/uploadFile";
 import { Button } from "./ui/button";
 import { FileUpload } from "./FileUpload";
@@ -12,11 +12,10 @@ import TagManager from "./TagManager";
 import BulkActionsToolbar from "./BulkActionsToolbar";
 import FolderNavigator from "./FolderNavigator";
 import EnhancedFileList from "./EnhancedFileList";
-import FileSharingDialog from "./FileSharingDialog";
 import { useEnhancedFiles, useFolders } from "@/hooks/useEnhancedFiles";
 import { useTags } from "@/hooks/useTags";
 import { ViewMode, SortBy, SortOrder, UserFile } from "@/types/file.types";
-import { openS3File } from "@/lib/openS3File";
+import openS3File from "@/lib/openS3File";
 
 export function EnhancedFilePage() {
   const { user } = useCorbado();
@@ -32,9 +31,6 @@ export function EnhancedFilePage() {
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [sortBy, setSortBy] = useState<SortBy>("name");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
-  const [fileToShare, setFileToShare] = useState<string | null>(null);
-  const [fileToDelete, setFileToDelete] = useState<string | null>(null);
-  const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false);
 
   // Data fetching
   const {
@@ -76,7 +72,7 @@ export function EnhancedFilePage() {
 
   const handleFileClick = async (file: UserFile) => {
     try {
-      await openS3File(file.id, file.name);
+      await openS3File(file.id);
     } catch (error) {
       console.error("Failed to open file:", error);
     }
@@ -196,7 +192,7 @@ export function EnhancedFilePage() {
           onFileClick={handleFileClick}
           onFolderClick={handleFolderClick}
           onFileDelete={handleFileDelete}
-          onFileShare={(fileId) => setFileToShare(fileId)}
+          onFileShare={() => {}}
           availableTags={tags}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
@@ -214,13 +210,6 @@ export function EnhancedFilePage() {
         </div>
       )}
 
-      {/* File sharing dialog */}
-      {fileToShare && (
-        <FileSharingDialog
-          fileId={fileToShare}
-          onClose={() => setFileToShare(null)}
-        />
-      )}
     </div>
   );
 }

@@ -6,7 +6,6 @@ import {
   Download,
   Trash2,
   Share2,
-  Edit2,
   Tag as TagIcon,
   Grid3x3,
   List,

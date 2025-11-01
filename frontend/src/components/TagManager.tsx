@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -12,7 +11,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Badge } from "./ui/badge";
-import { Tag, Trash2, Edit2, Plus, Tags as TagsIcon } from "lucide-react";
+import { Trash2, Edit2, Plus, Tags as TagsIcon } from "lucide-react";
 import { useTags, useCreateTag, useDeleteTag, useUpdateTag } from "../hooks/useTags";
 
 interface TagManagerProps {
