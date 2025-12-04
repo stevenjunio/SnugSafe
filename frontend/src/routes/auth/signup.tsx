@@ -1,6 +1,6 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { CorbadoAuth, useCorbado } from "@corbado/react";
-import { useEffect } from "react";
+import { useEffect, useCallback, useRef } from "react";
 
 export const Route = createFileRoute("/auth/signup")({
   component: RouteComponent,
@@ -9,13 +9,20 @@ export const Route = createFileRoute("/auth/signup")({
 function RouteComponent() {
   const router = useRouter();
   const { user, isAuthenticated, getFullUser } = useCorbado();
+  const isHandlingSignup = useRef(false);
 
-  useEffect(() => {
-    const handleUserSignup = () => {
-      // Replace with your API endpoint
-      const apiEndpoint =
-        import.meta.env.VITE_SERVER_URL + "/api/v1/auth/register";
-      getFullUser().then((userData) => {
+  const handleUserSignup = useCallback(() => {
+    // Prevent duplicate calls
+    if (isHandlingSignup.current) {
+      return;
+    }
+    isHandlingSignup.current = true;
+
+    // Replace with your API endpoint
+    const apiEndpoint =
+      import.meta.env.VITE_SERVER_URL + "/api/v1/auth/register";
+    getFullUser()
+      .then((userData) => {
         console.log("Full user data:", userData); // Debugging log
         if (
           userData.val &&
@@ -37,7 +44,12 @@ function RouteComponent() {
                 username: username,
               }),
             })
-              .then((response) => response.json())
+              .then((response) => {
+                if (!response.ok) {
+                  console.error("Error response from server:", response.status);
+                }
+                return response.json();
+              })
               .then((responseData) => {
                 console.log("User created:", responseData);
                 // Navigate to the files page after successful user creation
@@ -45,26 +57,34 @@ function RouteComponent() {
               })
               .catch((error) => {
                 console.error("Error creating user:", error);
-
                 router.navigate({ to: "/files" });
               });
           } else {
             console.error("Error fetching user information", user);
+            isHandlingSignup.current = false;
           }
+        } else {
+          isHandlingSignup.current = false;
         }
+      })
+      .catch((error) => {
+        console.error("Error getting full user:", error);
+        isHandlingSignup.current = false;
       });
-    };
+  }, [getFullUser, router, user]);
 
+  useEffect(() => {
     console.log("isauthed from Corbado:", isAuthenticated);
     if (isAuthenticated) {
       handleUserSignup();
     }
-  }, [isAuthenticated, user, router, getFullUser]);
+  }, [isAuthenticated, handleUserSignup]);
 
   return (
     <CorbadoAuth
       onLoggedIn={() => {
         console.log(`we logged`);
+        handleUserSignup();
       }}
     />
   );
