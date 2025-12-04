@@ -1,6 +1,7 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider } from "@/hooks/useTheme";
 
 const queryClient = new QueryClient();
 
@@ -22,11 +23,11 @@ export const Route = createRootRoute({
     }
   },
   component: () => (
-    <>
+    <ThemeProvider defaultTheme="system" storageKey="snugsafe-ui-theme">
       <QueryClientProvider client={queryClient}>
         <Outlet />
       </QueryClientProvider>
       {!import.meta.env.PROD && <TanStackRouterDevtools />}
-    </>
+    </ThemeProvider>
   ),
 });

@@ -6,6 +6,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import logo from "@/assets/snug-safe-word-logo.webp";
 import { useCorbado } from "@corbado/react";
 import { MenuBunny } from "./ui/MenuBunny";
+import { ThemeToggle } from "./ui/ThemeToggle";
 
 export function LoggedInFrameComponent({
   children,
@@ -138,6 +139,10 @@ export function LoggedInFrameComponent({
           </ul>
         </div>
         <div className="absolute bottom-0 w-64 p-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Theme</span>
+            <ThemeToggle />
+          </div>
           <Button
             variant="ghost"
             className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900"
