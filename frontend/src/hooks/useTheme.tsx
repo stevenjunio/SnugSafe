@@ -20,14 +20,26 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
+function getStoredTheme(storageKey: string, defaultTheme: Theme): Theme {
+  try {
+    const stored = localStorage.getItem(storageKey);
+    if (stored === "dark" || stored === "light" || stored === "system") {
+      return stored;
+    }
+  } catch {
+    // localStorage not available (SSR, private browsing, etc.)
+  }
+  return defaultTheme;
+}
+
 export function ThemeProvider({
   children,
   defaultTheme = "system",
   storageKey = "snugsafe-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
+  const [theme, setTheme] = useState<Theme>(() =>
+    getStoredTheme(storageKey, defaultTheme)
   );
 
   useEffect(() => {
@@ -50,9 +62,13 @@ export function ThemeProvider({
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
+    setTheme: (newTheme: Theme) => {
+      try {
+        localStorage.setItem(storageKey, newTheme);
+      } catch {
+        // localStorage not available
+      }
+      setTheme(newTheme);
     },
   };
 
