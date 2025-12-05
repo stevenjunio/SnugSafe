@@ -6,6 +6,7 @@ import { Lock, UserCheck } from "lucide-react";
 import snugSafeLogo from "@/assets/snug-safe-logo.webp";
 import { Link } from "@tanstack/react-router";
 import { useCorbado } from "@corbado/react";
+import { ThemeToggle } from "./ui/ThemeToggle";
 
 export function LandingPageComponent() {
   const { isAuthenticated } = useCorbado();
@@ -15,6 +16,9 @@ export function LandingPageComponent() {
         <a className="flex items-center justify-center mx-auto mt-4" href="#">
           <img src={snugSafeLogo} width={300} alt="The logo for snugSafe" />
         </a>
+        <div className="absolute right-4 top-4">
+          <ThemeToggle />
+        </div>
       </header>
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
